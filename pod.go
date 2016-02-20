@@ -1,10 +1,7 @@
 package guber
 
 type Pod struct {
-	Metadata struct {
-		Name   string
-		Labels map[string]string
-	}
+	Metadata
 	Spec struct {
 		Volumes []struct {
 			AwsElasticBlockStore struct {

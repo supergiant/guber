@@ -1,13 +1,13 @@
 package guber
 
+type Version struct {
+	Name string
+}
+
 type ThirdPartyResource struct {
-	Metadata struct {
-		Name string
-	}
+	Metadata
 	ApiVersion  string
 	Kind        string
 	Description string
-	Versions    []struct {
-		Name string
-	}
+	Versions    []Version
 }

@@ -8,12 +8,8 @@ import (
 )
 
 type Node struct {
-	Client   *Client
-	Metadata struct {
-		Name              string
-		Labels            map[string]string
-		CreationTimestamp string
-	}
+	Client *Client
+	Metadata
 	Spec struct {
 		ExternalID string
 	}
