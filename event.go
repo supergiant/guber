@@ -1,4 +1,4 @@
-package kubernetes
+package guber
 
 type Event struct {
 	Message string
