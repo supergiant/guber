@@ -2,9 +2,6 @@ package guber
 
 import (
 	"crypto/tls"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -12,69 +9,52 @@ type Client struct {
 	Host     string
 	Username string
 	Password string
+	http     *http.Client
 }
 
-func (client *Client) url(path string) string {
-	return fmt.Sprintf("https://%s/api/v1/%s", client.Host, path)
-}
-
-func (client *Client) Request(method string, path string) []byte {
-	req, err := http.NewRequest(method, client.url(path), nil)
-	if err != nil {
-		panic(err)
-	}
-
-	req.SetBasicAuth(client.Username, client.Password)
-
+func NewClient(host string, user string, pass string) *Client {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-
-	resp, err := (&http.Client{Transport: tr}).Do(req)
-	if err != nil {
-		panic(err)
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-
-	return body
+	return &Client{host, user, pass, &http.Client{Transport: tr}}
 }
 
-func (client *Client) getItems(resourceType string, query string, data interface{}) {
-	path := resourceType
-	if query != "" {
-		path = fmt.Sprintf("%s?%s", path, query)
-	}
-	resp := client.Request("GET", path)
-	if err := json.Unmarshal(resp, &data); err != nil {
-		panic(err)
-	}
+type Entity interface {
 }
 
-func (client *Client) Nodes(query string) []*Node {
-	var data struct{ Items []*Node }
-	client.getItems("nodes", query, &data)
-
-	// TODO is there a better way to do this so I don't have to repeat for each method below?
-	for _, item := range data.Items {
-		item.Client = client
-	}
-
-	return data.Items
+type EntityList interface {
 }
 
-func (client *Client) Events(query string) []*Event {
-	var data struct{ Items []*Event }
-	client.getItems("events", query, &data)
-	return data.Items
+type Resource interface {
+	DomainName() string // empty unless something like ThirdPartyResource
+	ApiGroup() string   // usually "api"
+	ApiVersion() string // usually "v1"
+	ApiName() string    // e.g. "replicationcontrollers"
+	Kind() string       // e.g. "ReplicationController"
+
+	Create(Entity) (Entity, error)
+	List() (EntityList, error)
+	Get(string) (Entity, error)
+	Update(string, Entity) (Entity, error)
+	Delete(string) error
 }
 
-func (client *Client) Pods(query string) []*Pod {
-	var data struct{ Items []*Pod }
-	client.getItems("pods", query, &data)
-	return data.Items
+func (c *Client) Get() *Request {
+	return &Request{client: c, method: "GET"}
+}
+
+func (c *Client) Post() *Request {
+	return &Request{client: c, method: "POST"}
+}
+
+func (c *Client) Patch() *Request {
+	return &Request{client: c, method: "PATCH"}
+}
+
+func (c *Client) Delete() *Request {
+	return &Request{client: c, method: "DELETE"}
+}
+
+func (c *Client) Events() *Events {
+	return &Events{c}
 }
