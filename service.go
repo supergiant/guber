@@ -1,4 +1,4 @@
-package model
+package guber
 
 type ServicePort struct {
 	Name       string `json:"name"`

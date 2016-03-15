@@ -1,7 +1,5 @@
 package guber
 
-import "guber/model"
-
 type Namespaces struct {
 	client *Client
 }
@@ -26,24 +24,24 @@ func (r Namespaces) Kind() string {
 	return "Namespace"
 }
 
-func (r Namespaces) Create(e Entity) (Entity, error) {
+func (r Namespaces) Create(e *Namespace) (*Namespace, error) {
 	err := r.client.Post().Resource(r).Entity(e).Do().Into(e)
 	return e, err
 }
 
-func (r Namespaces) List() (EntityList, error) {
-	list := new(model.EventList)
+func (r Namespaces) List() (*NamespaceList, error) {
+	list := new(NamespaceList)
 	err := r.client.Get().Resource(r).Do().Into(list)
 	return list, err
 }
 
-func (r Namespaces) Get(name string) (Entity, error) {
-	e := new(model.Event)
+func (r Namespaces) Get(name string) (*Namespace, error) {
+	e := new(Namespace)
 	err := r.client.Get().Resource(r).Name(name).Do().Into(e)
 	return e, err
 }
 
-func (r Namespaces) Update(name string, e Entity) (Entity, error) {
+func (r Namespaces) Update(name string, e *Namespace) (*Namespace, error) {
 	err := r.client.Patch().Resource(r).Name(name).Entity(e).Do().Into(e)
 	return e, err
 }

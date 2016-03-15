@@ -1,4 +1,4 @@
-package model
+package guber
 
 type PodTemplate struct {
 	Metadata *Metadata `json:"metadata"`

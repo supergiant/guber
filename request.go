@@ -3,6 +3,7 @@ package guber
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -32,7 +33,9 @@ func (r *Request) url() string {
 		path = fmt.Sprintf("namespaces/%s/", r.namespace)
 	}
 	path = fmt.Sprintf("%s%s", path, r.resource)
-
+	if r.name != "" {
+		path = fmt.Sprintf("%s/%s", path, r.name)
+	}
 	return fmt.Sprintf("%s/%s", r.baseurl, path)
 }
 
@@ -68,6 +71,13 @@ func (r *Request) Do() *Request {
 	req.SetBasicAuth(r.client.Username, r.client.Password)
 	r.error(err)
 	resp, err := r.client.http.Do(req)
+
+	// TODO
+	fmt.Println(req, resp.Status)
+	if resp.Status[:2] != "20" {
+		r.error(errors.New(resp.Status))
+	}
+
 	r.response = resp
 	r.error(err)
 	return r

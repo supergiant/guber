@@ -1,4 +1,4 @@
-package model
+package guber
 
 type Source struct {
 	Host string `json:"host"`

@@ -1,4 +1,4 @@
-package model
+package guber
 
 type AwsElasticsBlockStore struct {
 	VolumeID string `json:"volumeID"`

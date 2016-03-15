@@ -1,4 +1,4 @@
-package model
+package guber
 
 type ResourceDefinition struct {
 	Kind       string `json:"kind"`

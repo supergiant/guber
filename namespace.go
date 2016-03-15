@@ -1,4 +1,4 @@
-package model
+package guber
 
 type Namespace struct {
 	*ResourceDefinition

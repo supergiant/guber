@@ -31,12 +31,6 @@ type Resource interface {
 	ApiVersion() string // usually "v1"
 	ApiName() string    // e.g. "replicationcontrollers"
 	Kind() string       // e.g. "ReplicationController"
-
-	Create(Entity) (Entity, error)
-	List() (EntityList, error)
-	Get(string) (Entity, error)
-	Update(string, Entity) (Entity, error)
-	Delete(string) error
 }
 
 func (c *Client) Get() *Request {

@@ -1,4 +1,4 @@
-package model
+package guber
 
 type NodeSpec struct {
 	ExternalID string `json:"externalID"`
