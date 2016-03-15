@@ -15,12 +15,13 @@ type NodeStatusCondition struct {
 }
 
 type NodeStatus struct {
-	Capacity   NodeStatusCapacity    `json:"capacity"`
-	Conditions []NodeStatusCondition `json:"conditions"`
+	Capacity   *NodeStatusCapacity    `json:"capacity"`
+	Conditions []*NodeStatusCondition `json:"conditions"`
 }
 
 type Node struct {
-	Metadata `json:"metadata"`
-	Spec     NodeSpec   `json:"spec"`
-	Status   NodeStatus `json:"status"`
+	*ResourceDefinition
+	Metadata *Metadata   `json:"metadata"`
+	Spec     *NodeSpec   `json:"spec"`
+	Status   *NodeStatus `json:"status"`
 }

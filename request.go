@@ -9,13 +9,15 @@ import (
 )
 
 type Request struct {
-	client   *Client
-	method   string
-	baseurl  string
-	name     string
-	body     []byte
-	err      error
-	response *http.Response
+	client    *Client
+	method    string
+	baseurl   string
+	resource  string
+	namespace string
+	name      string
+	body      []byte
+	err       error
+	response  *http.Response
 }
 
 func (r *Request) error(err error) {
@@ -25,11 +27,27 @@ func (r *Request) error(err error) {
 }
 
 func (r *Request) url() string {
-	return fmt.Sprintf("%s/%s", r.baseurl, r.name)
+	path := ""
+	if r.namespace != "" {
+		path = fmt.Sprintf("namespaces/%s/", r.namespace)
+	}
+	path = fmt.Sprintf("%s%s", path, r.resource)
+
+	return fmt.Sprintf("%s/%s", r.baseurl, path)
 }
 
 func (r *Request) Resource(res Resource) *Request {
-	r.baseurl = fmt.Sprintf("https://%s/%s/%s/%s/%s", r.client.Host, res.DomainName(), res.ApiGroup(), res.ApiVersion(), res.ApiName())
+	baseurl := fmt.Sprintf("https://%s", r.client.Host)
+	if res.DomainName() != "" {
+		baseurl = fmt.Sprintf("%s/%s", baseurl, res.DomainName())
+	}
+	r.baseurl = fmt.Sprintf("%s/%s/%s", baseurl, res.ApiGroup(), res.ApiVersion())
+	r.resource = res.ApiName()
+	return r
+}
+
+func (r *Request) Namespace(namespace string) *Request {
+	r.namespace = namespace
 	return r
 }
 

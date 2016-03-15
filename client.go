@@ -55,6 +55,22 @@ func (c *Client) Delete() *Request {
 	return &Request{client: c, method: "DELETE"}
 }
 
-func (c *Client) Events() *Events {
-	return &Events{c}
+func (c *Client) Namespaces() *Namespaces {
+	return &Namespaces{c}
+}
+
+func (c *Client) Events(namespace string) *Events {
+	return &Events{c, namespace}
+}
+
+func (c *Client) Secrets(namespace string) *Secrets {
+	return &Secrets{c, namespace}
+}
+
+func (c *Client) Services(namespace string) *Services {
+	return &Services{c, namespace}
+}
+
+func (c *Client) ReplicationControllers(namespace string) *ReplicationControllers {
+	return &ReplicationControllers{c, namespace}
 }

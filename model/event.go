@@ -5,6 +5,7 @@ type Source struct {
 }
 
 type Event struct {
+	*ResourceDefinition
 	Message string  `json:"message"`
 	Count   int     `json:"count"`
 	Source  *Source `json:"source"`
