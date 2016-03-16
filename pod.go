@@ -1,11 +1,13 @@
 package guber
 
-type AwsElasticsBlockStore struct {
+type AwsElasticBlockStore struct {
 	VolumeID string `json:"volumeID"`
+	FSType   string `json:"fsType"`
 }
 
 type Volume struct {
-	AwsElasticsBlockStore *AwsElasticsBlockStore `json:"awsElasticBlockStore"`
+	Name                 string                `json:"name"`
+	AwsElasticBlockStore *AwsElasticBlockStore `json:"awsElasticBlockStore"`
 }
 
 type VolumeMount struct {
@@ -24,9 +26,14 @@ type Resources struct {
 }
 
 type ContainerPort struct {
-	Name          string `json:"name"`
+	Name          string `json:"name,omitempty"`
 	ContainerPort int    `json:"containerPort"`
-	Protocol      string `json:"protocol"`
+	Protocol      string `json:"protocol,omitempty"`
+}
+
+type EnvVar struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 type Container struct {
@@ -35,6 +42,7 @@ type Container struct {
 	Resources    *Resources       `json:"resources"`
 	Ports        []*ContainerPort `json:"ports"`
 	VolumeMounts []*VolumeMount   `json:"volumeMounts"`
+	Env          []*EnvVar        `json:"env"`
 }
 
 type ImagePullSecret struct {

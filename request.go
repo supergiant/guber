@@ -61,6 +61,10 @@ func (r *Request) Name(name string) *Request {
 
 func (r *Request) Entity(e Entity) *Request {
 	body, err := json.Marshal(e)
+
+	// TODO
+	fmt.Println("Req body: ", string(body))
+
 	r.body = body
 	r.error(err)
 	return r
@@ -71,13 +75,6 @@ func (r *Request) Do() *Request {
 	req.SetBasicAuth(r.client.Username, r.client.Password)
 	r.error(err)
 	resp, err := r.client.http.Do(req)
-
-	// TODO
-	fmt.Println(req, resp.Status)
-	if resp.Status[:2] != "20" {
-		r.error(errors.New(resp.Status))
-	}
-
 	r.response = resp
 	r.error(err)
 	return r
@@ -87,6 +84,14 @@ func (r *Request) Do() *Request {
 func (r *Request) Into(e Entity) error {
 	defer r.response.Body.Close()
 	resp, err := ioutil.ReadAll(r.response.Body)
+
+	// TODO
+	fmt.Println(r.url())
+	if r.response.Status[:2] != "20" {
+		errMsg := fmt.Sprintf("Status: %s, Body: %s", r.response.Status, resp)
+		r.error(errors.New(errMsg))
+	}
+
 	r.error(err)
 	json.Unmarshal(resp, e)
 	return r.err

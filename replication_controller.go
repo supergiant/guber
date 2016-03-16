@@ -11,11 +11,15 @@ type ReplicationControllerSpec struct {
 	Template *PodTemplate      `json:"template"`
 }
 
+type ReplicationControllerStatus struct {
+	Replicas int `json:"replicas"`
+}
+
 type ReplicationController struct {
 	*ResourceDefinition
-	Metadata *Metadata                  `json:"metadata"`
-	Spec     *ReplicationControllerSpec `json:"spec"`
-	// Status   *ReplicationControllerStatus `json:"status"`
+	Metadata *Metadata                    `json:"metadata"`
+	Spec     *ReplicationControllerSpec   `json:"spec"`
+	Status   *ReplicationControllerStatus `json:"status,omitempty"`
 }
 
 type ReplicationControllerList struct {
