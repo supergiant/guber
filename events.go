@@ -40,10 +40,14 @@ func (r *Events) List(q *QueryParams) (*EventList, error) {
 
 func (r *Events) Get(name string) (*Event, error) {
 	e := new(Event)
-	if err := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(e); err != nil {
+	req := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do()
+	if err := req.Into(e); err != nil {
 		return nil, err
 	}
-	return e, nil
+	if req.found {
+		return e, nil
+	}
+	return nil, nil
 }
 
 func (r *Events) Update(name string, e *Event) (*Event, error) {

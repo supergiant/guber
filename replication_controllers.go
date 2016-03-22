@@ -40,10 +40,14 @@ func (r *ReplicationControllers) List(q *QueryParams) (*ReplicationControllerLis
 
 func (r *ReplicationControllers) Get(name string) (*ReplicationController, error) {
 	e := new(ReplicationController)
-	if err := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(e); err != nil {
+	req := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do()
+	if err := req.Into(e); err != nil {
 		return nil, err
 	}
-	return e, nil
+	if req.found {
+		return e, nil
+	}
+	return nil, nil
 }
 
 func (r *ReplicationControllers) Update(name string, e *ReplicationController) (*ReplicationController, error) {

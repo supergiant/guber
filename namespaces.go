@@ -39,10 +39,14 @@ func (r *Namespaces) List(q *QueryParams) (*NamespaceList, error) {
 
 func (r *Namespaces) Get(name string) (*Namespace, error) {
 	e := new(Namespace)
-	if err := r.client.Get().Resource(r).Name(name).Do().Into(e); err != nil {
+	req := r.client.Get().Resource(r).Name(name).Do()
+	if err := req.Into(e); err != nil {
 		return nil, err
 	}
-	return e, nil
+	if req.found {
+		return e, nil
+	}
+	return nil, nil
 }
 
 func (r *Namespaces) Update(name string, e *Namespace) (*Namespace, error) {

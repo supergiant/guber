@@ -40,10 +40,14 @@ func (r *Secrets) List(q *QueryParams) (*SecretList, error) {
 
 func (r *Secrets) Get(name string) (*Secret, error) {
 	e := new(Secret)
-	if err := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(e); err != nil {
+	req := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do()
+	if err := req.Into(e); err != nil {
 		return nil, err
 	}
-	return e, nil
+	if req.found {
+		return e, nil
+	}
+	return nil, nil
 }
 
 func (r *Secrets) Update(name string, e *Secret) (*Secret, error) {

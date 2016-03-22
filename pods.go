@@ -40,10 +40,14 @@ func (r *Pods) List(q *QueryParams) (*PodList, error) {
 
 func (r *Pods) Get(name string) (*Pod, error) {
 	e := new(Pod)
-	if err := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(e); err != nil {
+	req := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do()
+	if err := req.Into(e); err != nil {
 		return nil, err
 	}
-	return e, nil
+	if req.found {
+		return e, nil
+	}
+	return nil, nil
 }
 
 func (r *Pods) Update(name string, e *Pod) (*Pod, error) {
