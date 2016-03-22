@@ -25,25 +25,31 @@ func (r Namespaces) Kind() string {
 }
 
 func (r *Namespaces) Create(e *Namespace) (*Namespace, error) {
-	err := r.client.Post().Resource(r).Entity(e).Do().Into(e)
-	return e, err
+	if err := r.client.Post().Resource(r).Entity(e).Do().Into(e); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
-func (r *Namespaces) List() (*NamespaceList, error) {
+func (r *Namespaces) List(q *QueryParams) (*NamespaceList, error) {
 	list := new(NamespaceList)
-	err := r.client.Get().Resource(r).Do().Into(list)
+	err := r.client.Get().Resource(r).Query(q).Do().Into(list)
 	return list, err
 }
 
 func (r *Namespaces) Get(name string) (*Namespace, error) {
 	e := new(Namespace)
-	err := r.client.Get().Resource(r).Name(name).Do().Into(e)
-	return e, err
+	if err := r.client.Get().Resource(r).Name(name).Do().Into(e); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
 func (r *Namespaces) Update(name string, e *Namespace) (*Namespace, error) {
-	err := r.client.Patch().Resource(r).Name(name).Entity(e).Do().Into(e)
-	return e, err
+	if err := r.client.Patch().Resource(r).Name(name).Entity(e).Do().Into(e); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
 func (r *Namespaces) Delete(name string) (found bool, err error) {

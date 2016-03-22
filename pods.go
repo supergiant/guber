@@ -26,8 +26,10 @@ func (r Pods) Kind() string {
 }
 
 func (r *Pods) Create(e *Pod) (*Pod, error) {
-	err := r.client.Post().Resource(r).Namespace(r.Namespace).Entity(e).Do().Into(e)
-	return e, err
+	if err := r.client.Post().Resource(r).Namespace(r.Namespace).Entity(e).Do().Into(e); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
 func (r *Pods) List(q *QueryParams) (*PodList, error) {
@@ -38,13 +40,17 @@ func (r *Pods) List(q *QueryParams) (*PodList, error) {
 
 func (r *Pods) Get(name string) (*Pod, error) {
 	e := new(Pod)
-	err := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(e)
-	return e, err
+	if err := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(e); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
 func (r *Pods) Update(name string, e *Pod) (*Pod, error) {
-	err := r.client.Patch().Resource(r).Namespace(r.Namespace).Name(name).Entity(e).Do().Into(e)
-	return e, err
+	if err := r.client.Patch().Resource(r).Namespace(r.Namespace).Name(name).Entity(e).Do().Into(e); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
 func (r *Pods) Delete(name string) (found bool, err error) {

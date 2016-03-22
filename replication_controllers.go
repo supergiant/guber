@@ -26,26 +26,31 @@ func (r ReplicationControllers) Kind() string {
 }
 
 func (r *ReplicationControllers) Create(e *ReplicationController) (*ReplicationController, error) {
-	err := r.client.Post().Resource(r).Namespace(r.Namespace).Entity(e).Do().Into(e)
-	return e, err
+	if err := r.client.Post().Resource(r).Namespace(r.Namespace).Entity(e).Do().Into(e); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
-func (r *ReplicationControllers) List() (*ReplicationControllerList, error) {
+func (r *ReplicationControllers) List(q *QueryParams) (*ReplicationControllerList, error) {
 	list := new(ReplicationControllerList)
-	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
+	err := r.client.Get().Resource(r).Namespace(r.Namespace).Query(q).Do().Into(list)
 	return list, err
 }
 
-// TODO ideally we should return nil instead of e on error
 func (r *ReplicationControllers) Get(name string) (*ReplicationController, error) {
 	e := new(ReplicationController)
-	err := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(e)
-	return e, err
+	if err := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(e); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
 func (r *ReplicationControllers) Update(name string, e *ReplicationController) (*ReplicationController, error) {
-	err := r.client.Patch().Resource(r).Namespace(r.Namespace).Name(name).Entity(e).Do().Into(e)
-	return e, err
+	if err := r.client.Patch().Resource(r).Namespace(r.Namespace).Name(name).Entity(e).Do().Into(e); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
 func (r *ReplicationControllers) Delete(name string) (found bool, err error) {
