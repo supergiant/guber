@@ -144,6 +144,10 @@ type Pod struct {
 	Spec     *PodSpec  `json:"spec"`
 }
 
+type PodList struct {
+	Items []*Pod
+}
+
 // Service
 //==============================================================================
 type ServicePort struct {
@@ -199,4 +203,9 @@ type Event struct {
 
 type EventList struct {
 	Items []*Event `json:"items"`
+}
+
+// TODO not sure if this should be in the types file.. related to queries, but is a Kube-specific thing
+type QueryParams struct {
+	LabelSelector string `url:"labelSelector"`
 }

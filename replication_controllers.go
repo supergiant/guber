@@ -25,28 +25,30 @@ func (r ReplicationControllers) Kind() string {
 	return "ReplicationController"
 }
 
-func (r ReplicationControllers) Create(e *ReplicationController) (*ReplicationController, error) {
+func (r *ReplicationControllers) Create(e *ReplicationController) (*ReplicationController, error) {
 	err := r.client.Post().Resource(r).Namespace(r.Namespace).Entity(e).Do().Into(e)
 	return e, err
 }
 
-func (r ReplicationControllers) List() (*ReplicationControllerList, error) {
+func (r *ReplicationControllers) List() (*ReplicationControllerList, error) {
 	list := new(ReplicationControllerList)
 	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
 	return list, err
 }
 
-func (r ReplicationControllers) Get(name string) (*ReplicationController, error) {
+// TODO ideally we should return nil instead of e on error
+func (r *ReplicationControllers) Get(name string) (*ReplicationController, error) {
 	e := new(ReplicationController)
 	err := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(e)
 	return e, err
 }
 
-func (r ReplicationControllers) Update(name string, e *ReplicationController) (*ReplicationController, error) {
+func (r *ReplicationControllers) Update(name string, e *ReplicationController) (*ReplicationController, error) {
 	err := r.client.Patch().Resource(r).Namespace(r.Namespace).Name(name).Entity(e).Do().Into(e)
 	return e, err
 }
 
-func (r ReplicationControllers) Delete(name string) error {
-	return r.client.Delete().Resource(r).Namespace(r.Namespace).Name(name).Do().Into(nil)
+func (r *ReplicationControllers) Delete(name string) (found bool, err error) {
+	req := r.client.Delete().Resource(r).Namespace(r.Namespace).Name(name).Do()
+	return req.found, req.err
 }

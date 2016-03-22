@@ -68,3 +68,7 @@ func (c *Client) Services(namespace string) *Services {
 func (c *Client) ReplicationControllers(namespace string) *ReplicationControllers {
 	return &ReplicationControllers{c, namespace}
 }
+
+func (c *Client) Pods(namespace string) *Pods {
+	return &Pods{c, namespace}
+}

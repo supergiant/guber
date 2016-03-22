@@ -13,16 +13,25 @@ type Request struct {
 	client    *Client
 	method    string
 	baseurl   string
+	query     string
 	resource  string
 	namespace string
 	name      string
 	body      []byte
-	err       error
-	response  *http.Response
+
+	// NOTE this is used distinct from err, because a 404 is not technically an
+	// error, except to the end-user who expects a resource to be there.
+	// Without this, we don't have a way to determine if an err was a 404 or
+	// something lower-level without inspecting the error message.
+	found bool
+
+	err      error
+	response *http.Response
 }
 
 func (r *Request) error(err error) {
-	if r.err == nil {
+	if err != nil && r.err == nil {
+		fmt.Println("REQUEST ERROR", err)
 		r.err = err
 	}
 }
@@ -32,11 +41,14 @@ func (r *Request) url() string {
 	if r.namespace != "" {
 		path = fmt.Sprintf("namespaces/%s/", r.namespace)
 	}
-	path = fmt.Sprintf("%s%s", path, r.resource)
+	path = path + r.resource
 	if r.name != "" {
-		path = fmt.Sprintf("%s/%s", path, r.name)
+		path = path + "/" + r.name
 	}
-	return fmt.Sprintf("%s/%s", r.baseurl, path)
+	if r.query != "" {
+		path = path + "?" + r.query
+	}
+	return r.baseurl + "/" + path
 }
 
 func (r *Request) Resource(res Resource) *Request {
@@ -70,28 +82,65 @@ func (r *Request) Entity(e Entity) *Request {
 	return r
 }
 
+func (r *Request) Query(q *QueryParams) *Request {
+	if q == nil {
+		return r
+	}
+
+	// v, err := query.Values(q)
+	// if err != nil {
+	// 	panic(err) // TODO should use r.error() here probably
+	// }
+	// queryStr := v.Encode()
+
+	// TODO  -- we went with this terribly rigid strategy because of how query pkg encodes the = chars
+	if ls := q.LabelSelector; ls != "" {
+		r.query = "?labelSelector=" + ls
+	}
+
+	return r
+}
+
 func (r *Request) Do() *Request {
 	req, err := http.NewRequest(r.method, r.url(), bytes.NewBuffer(r.body))
+	if err != nil {
+		panic(err) // TODO
+	}
+
 	req.SetBasicAuth(r.client.Username, r.client.Password)
 	r.error(err)
+
+	// TODO
+	// fmt.Println(r.url())
+	fmt.Println(*req)
+
 	resp, err := r.client.http.Do(req)
-	r.response = resp
 	r.error(err)
+
+	// TODO
+	if resp != nil {
+		r.response = resp
+		if resp.StatusCode == 404 {
+			r.found = false
+		} else if status := resp.Status; status[:2] != "20" {
+			errMsg := fmt.Sprintf("Status: %s, Body: %s", status, resp)
+			r.error(errors.New(errMsg))
+		} else {
+			r.found = true // NOTE this only really matters for lookups, but we set it true here anyhow
+		}
+	}
 	return r
 }
 
 // The exit point for a Request (where error is pooped out)
 func (r *Request) Into(e Entity) error {
-	defer r.response.Body.Close()
-	resp, err := ioutil.ReadAll(r.response.Body)
-
-	// TODO
-	fmt.Println(r.url())
-	if r.response.Status[:2] != "20" {
-		errMsg := fmt.Sprintf("Status: %s, Body: %s", r.response.Status, resp)
-		r.error(errors.New(errMsg))
+	if r.response == nil {
+		r.error(errors.New("Response is nil"))
+		return r.err
 	}
 
+	defer r.response.Body.Close()
+	resp, err := ioutil.ReadAll(r.response.Body)
 	r.error(err)
 	json.Unmarshal(resp, e)
 	return r.err
