@@ -99,7 +99,7 @@ type VolumeMount struct {
 
 type ResourceValues struct {
 	Memory string `json:"memory"`
-	CPU    string `json:"memory"`
+	CPU    string `json:"cpu"`
 }
 
 type Resources struct {
@@ -162,6 +162,8 @@ type ServiceSpec struct {
 	Type     string            `json:"type,omitempty"`
 	Selector map[string]string `json:"selector"`
 	Ports    []*ServicePort    `json:"ports"`
+
+	ClusterIP string `json:"clusterIP,omitempty"`
 }
 
 type Service struct {

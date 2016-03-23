@@ -95,7 +95,7 @@ func (r *Request) Query(q *QueryParams) *Request {
 
 	// TODO  -- we went with this terribly rigid strategy because of how query pkg encodes the = chars
 	if ls := q.LabelSelector; ls != "" {
-		r.query = "?labelSelector=" + ls
+		r.query = "labelSelector=" + ls
 	}
 
 	return r
@@ -120,10 +120,13 @@ func (r *Request) Do() *Request {
 	// TODO
 	if resp != nil {
 		r.response = resp
+
+		r.readBody()
+
 		if resp.StatusCode == 404 {
 			r.found = false
 		} else if status := resp.Status; status[:2] != "20" {
-			errMsg := fmt.Sprintf("Status: %s, Body: %s", status, resp)
+			errMsg := fmt.Sprintf("Status: %s, Body: %s", status, string(r.body))
 			r.error(errors.New(errMsg))
 		} else {
 			r.found = true // NOTE this only really matters for lookups, but we set it true here anyhow
@@ -132,16 +135,21 @@ func (r *Request) Do() *Request {
 	return r
 }
 
-// The exit point for a Request (where error is pooped out)
-func (r *Request) Into(e Entity) error {
+func (r *Request) readBody() {
 	if r.response == nil {
 		r.error(errors.New("Response is nil"))
-		return r.err
+		return
 	}
-
 	defer r.response.Body.Close()
-	resp, err := ioutil.ReadAll(r.response.Body)
+	body, err := ioutil.ReadAll(r.response.Body)
+	r.body = body
 	r.error(err)
-	json.Unmarshal(resp, e)
+}
+
+// The exit point for a Request (where error is pooped out)
+func (r *Request) Into(e Entity) error {
+	if r.body != nil {
+		json.Unmarshal(r.body, e)
+	}
 	return r.err
 }
