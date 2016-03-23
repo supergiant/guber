@@ -32,9 +32,15 @@ func (r *Events) Create(e *Event) (*Event, error) {
 	return e, nil
 }
 
-func (r *Events) List(q *QueryParams) (*EventList, error) {
+func (r *Events) Query(q *QueryParams) (*EventList, error) {
 	list := new(EventList)
 	err := r.client.Get().Resource(r).Namespace(r.Namespace).Query(q).Do().Into(list)
+	return list, err
+}
+
+func (r *Events) List() (*EventList, error) {
+	list := new(EventList)
+	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
 	return list, err
 }
 

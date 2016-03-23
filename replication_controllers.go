@@ -32,9 +32,15 @@ func (r *ReplicationControllers) Create(e *ReplicationController) (*ReplicationC
 	return e, nil
 }
 
-func (r *ReplicationControllers) List(q *QueryParams) (*ReplicationControllerList, error) {
+func (r *ReplicationControllers) Query(q *QueryParams) (*ReplicationControllerList, error) {
 	list := new(ReplicationControllerList)
 	err := r.client.Get().Resource(r).Namespace(r.Namespace).Query(q).Do().Into(list)
+	return list, err
+}
+
+func (r *ReplicationControllers) List() (*ReplicationControllerList, error) {
+	list := new(ReplicationControllerList)
+	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
 	return list, err
 }
 

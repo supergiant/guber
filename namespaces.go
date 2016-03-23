@@ -31,9 +31,15 @@ func (r *Namespaces) Create(e *Namespace) (*Namespace, error) {
 	return e, nil
 }
 
-func (r *Namespaces) List(q *QueryParams) (*NamespaceList, error) {
+func (r *Namespaces) Query(q *QueryParams) (*NamespaceList, error) {
 	list := new(NamespaceList)
 	err := r.client.Get().Resource(r).Query(q).Do().Into(list)
+	return list, err
+}
+
+func (r *Namespaces) List() (*NamespaceList, error) {
+	list := new(NamespaceList)
+	err := r.client.Get().Resource(r).Do().Into(list)
 	return list, err
 }
 

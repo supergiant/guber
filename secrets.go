@@ -32,9 +32,15 @@ func (r *Secrets) Create(e *Secret) (*Secret, error) {
 	return e, nil
 }
 
-func (r *Secrets) List(q *QueryParams) (*SecretList, error) {
+func (r *Secrets) Query(q *QueryParams) (*SecretList, error) {
 	list := new(SecretList)
 	err := r.client.Get().Resource(r).Namespace(r.Namespace).Query(q).Do().Into(list)
+	return list, err
+}
+
+func (r *Secrets) List() (*SecretList, error) {
+	list := new(SecretList)
+	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
 	return list, err
 }
 

@@ -32,9 +32,15 @@ func (r *Pods) Create(e *Pod) (*Pod, error) {
 	return e, nil
 }
 
-func (r *Pods) List(q *QueryParams) (*PodList, error) {
+func (r *Pods) Query(q *QueryParams) (*PodList, error) {
 	list := new(PodList)
 	err := r.client.Get().Resource(r).Namespace(r.Namespace).Query(q).Do().Into(list)
+	return list, err
+}
+
+func (r *Pods) List() (*PodList, error) {
+	list := new(PodList)
+	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
 	return list, err
 }
 

@@ -32,9 +32,15 @@ func (r *Services) Create(e *Service) (*Service, error) {
 	return e, nil
 }
 
-func (r *Services) List(q *QueryParams) (*ServiceList, error) {
+func (r *Services) Query(q *QueryParams) (*ServiceList, error) {
 	list := new(ServiceList)
 	err := r.client.Get().Resource(r).Namespace(r.Namespace).Query(q).Do().Into(list)
+	return list, err
+}
+
+func (r *Services) List() (*ServiceList, error) {
+	list := new(ServiceList)
+	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
 	return list, err
 }
 
