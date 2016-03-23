@@ -31,7 +31,6 @@ type Request struct {
 
 func (r *Request) error(err error) {
 	if err != nil && r.err == nil {
-		fmt.Println("REQUEST ERROR", err)
 		r.err = err
 	}
 }
@@ -73,10 +72,6 @@ func (r *Request) Name(name string) *Request {
 
 func (r *Request) Entity(e Entity) *Request {
 	body, err := json.Marshal(e)
-
-	// TODO
-	fmt.Println("Req body: ", string(body))
-
 	r.body = body
 	r.error(err)
 	return r
@@ -109,10 +104,6 @@ func (r *Request) Do() *Request {
 
 	req.SetBasicAuth(r.client.Username, r.client.Password)
 	r.error(err)
-
-	// TODO
-	// fmt.Println(r.url())
-	fmt.Println(*req)
 
 	resp, err := r.client.http.Do(req)
 	r.error(err)
