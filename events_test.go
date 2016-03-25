@@ -5,9 +5,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"strings"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 var (
@@ -17,90 +18,78 @@ var (
 	}
 )
 
-func TestDomainName(t *testing.T) {
-	resp := tevents.DomainName()
-	expected := ""
-
-	if expected != resp {
-		t.Error("ERROR .DomainName(): expected,", expected, "-- But got,", resp)
-	}
-}
-
-func TestApiGroup(t *testing.T) {
-	resp := tevents.APIGroup()
-	expected := "api"
-
-	if expected != resp {
-		t.Error("ERROR .ApiGroup(): expected,", expected, "-- But got,", resp)
-	}
-}
-
-func TestApiVersion(t *testing.T) {
-	resp := tevents.APIVersion()
-	expected := "v1"
-
-	if expected != resp {
-		t.Error("ERROR .ApiVersion(): expected,", expected, "-- But got,", resp)
-	}
-}
-
-func TestApiName(t *testing.T) {
-	resp := tevents.APIName()
-	expected := "events"
-
-	if expected != resp {
-		t.Error("ERROR .ApiName(): expected,", expected, "-- But got,", resp)
-	}
-}
-
-func TestKind(t *testing.T) {
-	resp := tevents.Kind()
-	expected := "Event"
-
-	if expected != resp {
-		t.Error("ERROR .Kind(): expected,", expected, "-- But got,", resp)
-	}
-}
-
-func TestCreate(t *testing.T) {
-	// Setup our test server
-	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "Much Success")
-	}))
-	defer ts.Close()
-
-	// test client
-	url := strings.Replace(ts.URL, "https://", "", -1)
-	tsClient := &Client{
-		Host:     url,
-		Username: "test",
-		Password: "test",
-		http: &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-			},
-		},
-	}
-
-	tsEvents := &Events{
-		client:    tsClient,
-		Namespace: "test",
-	}
-	resp, _ := tsEvents.Create(&Event{
-		Message: "test",
-		Count:   1,
+func TestEventsDomainName(t *testing.T) {
+	Convey("When calling the .DomainName() on an Events object.", t, func() {
+		resp := tevents.DomainName()
+		Convey("We should expect to get a blank string return.", func() {
+			expected := ""
+			So(resp, ShouldEqual, expected)
+		})
 	})
+}
 
-	expected := &Event{
-		Message: "test",
-		Count:   1,
-	}
+func TestEventsAPIGroup(t *testing.T) {
+	Convey("When calling the .APIGroup() on an Events object.", t, func() {
+		resp := tevents.APIGroup()
+		Convey("We should expect to get a string \"api\" return.", func() {
+			expected := "api"
+			So(resp, ShouldEqual, expected)
+		})
+	})
+}
 
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR .Create(): expected,", expected, "-- But got,", resp)
-	}
+func TestEventsAPIVersion(t *testing.T) {
+	Convey("When calling the .APIVersion() on an Events object.", t, func() {
+		resp := tevents.APIVersion()
+		Convey("We should expect to get a string \"v1\" return.", func() {
+			expected := "v1"
+			So(resp, ShouldEqual, expected)
+		})
+	})
+}
+
+func TestEventsAPIName(t *testing.T) {
+	Convey("When calling the .APIName() on an Events object.", t, func() {
+		resp := tevents.APIName()
+		Convey("We should expect to get a string \"events\" return.", func() {
+			expected := "events"
+			So(resp, ShouldEqual, expected)
+		})
+	})
+}
+
+func TestEventsKind(t *testing.T) {
+	Convey("When calling the .Kind() on an Events object.", t, func() {
+		resp := tevents.Kind()
+		Convey("We should expect to get a string \"Event\" return.", func() {
+			expected := "Event"
+			So(resp, ShouldEqual, expected)
+		})
+	})
+}
+
+func TestEventsCreate(t *testing.T) {
+	Convey("We start a mock api server.", t, func() {
+		ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			io.WriteString(w, "Much Success")
+		}))
+		defer ts.Close()
+		So(ts, ShouldNotBeNil)
+		Convey("When calling the .Create(&Event) method on a Client object.", func() {
+			tClient.Host = strings.Replace(ts.URL, "https://", "", -1)
+			resp, _ := tevents.Create(&Event{
+				Message: "test",
+				Count:   1,
+			})
+			Convey("We expect to get a Event object that matches our expected Event object.", func() {
+				expected := &Event{
+					Message: "test",
+					Count:   1,
+				}
+				So(resp, ShouldResemble, expected)
+			})
+		})
+	})
 }
 
 func TestCreateError(t *testing.T) {
