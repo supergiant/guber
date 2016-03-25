@@ -3,7 +3,6 @@ package guber
 import (
 	"crypto/tls"
 	"net/http"
-	"reflect"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -25,7 +24,7 @@ var (
 )
 
 // Tests the NewClient function
-func TestNewClient(t *testing.T) {
+func TestCreateNewClient(t *testing.T) {
 	// Create a client
 	Convey("When creating a new Kubernetes client.", t, func() {
 		client := NewClient("test", "test", "test")
@@ -51,131 +50,131 @@ func TestNewClient(t *testing.T) {
 
 }
 
-func TestGet(t *testing.T) {
-	expected := &Request{
-		client: tClient,
-		method: "GET",
-	}
-
-	resp := tClient.Get()
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .Get(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientGet(t *testing.T) {
+	Convey("When running a .Get() method on a Client object.", t, func() {
+		resp := tClient.Get()
+		Convey("We expect to get a Request object returned containing the Client object, and the \"GET\" method.", func() {
+			expected := &Request{
+				client: tClient,
+				method: "GET",
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
 
-func TestPost(t *testing.T) {
-	expected := &Request{
-		client: tClient,
-		method: "POST",
-	}
-
-	resp := tClient.Post()
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .Post(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientPost(t *testing.T) {
+	Convey("When running a .Post() method on a Client object.", t, func() {
+		resp := tClient.Post()
+		Convey("We expect to get a Request object returned containing the Client object, and the \"POST\" method.", func() {
+			expected := &Request{
+				client: tClient,
+				method: "POST",
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
 
-func TestPatch(t *testing.T) {
-	expected := &Request{
-		client: tClient,
-		method: "PATCH",
-	}
-
-	resp := tClient.Patch()
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .Patch(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientPatch(t *testing.T) {
+	Convey("When running a .Patch() method on a Client object.", t, func() {
+		resp := tClient.Patch()
+		Convey("We expect to get a Request object returned containing the Client object, and the \"PATCH\" method.", func() {
+			expected := &Request{
+				client: tClient,
+				method: "PATCH",
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
 
-func TestDelete(t *testing.T) {
-	expected := &Request{
-		client: tClient,
-		method: "DELETE",
-	}
-
-	resp := tClient.Delete()
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .Delete(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientDelete(t *testing.T) {
+	Convey("When running a .Delete() method on a Client object.", t, func() {
+		resp := tClient.Delete()
+		Convey("We expect to get a Request object returned containing the Client object, and the \"DELETE\" method.", func() {
+			expected := &Request{
+				client: tClient,
+				method: "DELETE",
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
 
-func TestNamespaces(t *testing.T) {
-	expected := &Namespaces{
-		client: tClient,
-	}
-
-	resp := tClient.Namespaces()
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .Namespaces(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientNamespaces(t *testing.T) {
+	Convey("When running a .Namespaces() method on a Client object.", t, func() {
+		resp := tClient.Namespaces()
+		Convey("We expect to get a Namespaces object containing the Client object.", func() {
+			expected := &Namespaces{
+				client: tClient,
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
 
-func TestEvents(t *testing.T) {
-	expected := &Events{
-		client:    tClient,
-		Namespace: "test",
-	}
-
-	resp := tClient.Events("test")
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .Events(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientEvents(t *testing.T) {
+	Convey("When running a .Events(\"test\") method on a Client object.", t, func() {
+		resp := tClient.Events("test")
+		Convey("We expect to get a Events object containing the Client object, and the Namespace string passed to the method.", func() {
+			expected := &Events{
+				client:    tClient,
+				Namespace: "test",
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
 
-func TestSecrets(t *testing.T) {
-	expected := &Secrets{
-		client:    tClient,
-		Namespace: "test",
-	}
-
-	resp := tClient.Secrets("test")
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .Secrets(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientSecrets(t *testing.T) {
+	Convey("When running a .Secrets(\"test\") method on a Client object.", t, func() {
+		resp := tClient.Secrets("test")
+		Convey("We expect to get a Secrets object containing the Client object, and the Namespace string passed to the method.", func() {
+			expected := &Secrets{
+				client:    tClient,
+				Namespace: "test",
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
 
-func TestServices(t *testing.T) {
-	expected := &Services{
-		client:    tClient,
-		Namespace: "test",
-	}
-
-	resp := tClient.Services("test")
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .Services(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientServices(t *testing.T) {
+	Convey("When running a .Services(\"test\") method on a Client object.", t, func() {
+		resp := tClient.Services("test")
+		Convey("We expect to get a Services object containing the Client object, and the Namespace string passed to the method.", func() {
+			expected := &Services{
+				client:    tClient,
+				Namespace: "test",
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
 
-func TestReplicationControllers(t *testing.T) {
-	expected := &ReplicationControllers{
-		client:    tClient,
-		Namespace: "test",
-	}
-
-	resp := tClient.ReplicationControllers("test")
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .ReplicationControllers(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientReplicationControllers(t *testing.T) {
+	Convey("When running a .ReplicationControllers(\"test\") method on a Client object.", t, func() {
+		resp := tClient.ReplicationControllers("test")
+		Convey("We expect to get a ReplicationControllers object containing the Client object, and the Namespace string passed to the method.", func() {
+			expected := &ReplicationControllers{
+				client:    tClient,
+				Namespace: "test",
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
 
-func TestPods(t *testing.T) {
-	expected := &Pods{
-		client:    tClient,
-		Namespace: "test",
-	}
-
-	resp := tClient.Pods("test")
-
-	if !reflect.DeepEqual(expected, resp) {
-		t.Error("ERROR: .Pods(): expected,", expected, "-- But got,", resp)
-	}
+func TestClientPods(t *testing.T) {
+	Convey("When running a .Pods(\"test\") method on a Client object.", t, func() {
+		resp := tClient.Pods("test")
+		Convey("We expect to get a Pods object containing the Client object, and the Namespace string passed to the method.", func() {
+			expected := &Pods{
+				client:    tClient,
+				Namespace: "test",
+			}
+			So(resp, ShouldResemble, expected)
+		})
+	})
 }
