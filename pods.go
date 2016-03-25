@@ -9,15 +9,15 @@ func (r Pods) DomainName() string {
 	return ""
 }
 
-func (r Pods) ApiGroup() string {
+func (r Pods) APIGroup() string {
 	return "api"
 }
 
-func (r Pods) ApiVersion() string {
+func (r Pods) APIVersion() string {
 	return "v1"
 }
 
-func (r Pods) ApiName() string {
+func (r Pods) APIName() string {
 	return "pods"
 }
 

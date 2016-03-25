@@ -5,6 +5,12 @@ import (
 	"net/http"
 )
 
+// vars
+var (
+	defaultAPIGroup   = "api"
+	defaultAPIVersion = "v1"
+)
+
 // Interfaces
 
 // Entity is a data holder, usually used for holding json data objects
@@ -14,9 +20,9 @@ type Entity interface {
 // Resource holds interfaces to kubernetes api artifacts.
 type Resource interface {
 	DomainName() string // empty unless something like ThirdPartyResource
-	ApiGroup() string   // usually "api"
-	ApiVersion() string // usually "v1"
-	ApiName() string    // e.g. "replicationcontrollers"
+	APIGroup() string   // usually "api"
+	APIVersion() string // usually "v1"
+	APIName() string    // e.g. "replicationcontrollers"
 	Kind() string       // e.g. "ReplicationController"
 }
 
