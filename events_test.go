@@ -27,7 +27,7 @@ func TestDomainName(t *testing.T) {
 }
 
 func TestApiGroup(t *testing.T) {
-	resp := tevents.ApiGroup()
+	resp := tevents.APIGroup()
 	expected := "api"
 
 	if expected != resp {
@@ -36,7 +36,7 @@ func TestApiGroup(t *testing.T) {
 }
 
 func TestApiVersion(t *testing.T) {
-	resp := tevents.ApiVersion()
+	resp := tevents.APIVersion()
 	expected := "v1"
 
 	if expected != resp {
@@ -45,7 +45,7 @@ func TestApiVersion(t *testing.T) {
 }
 
 func TestApiName(t *testing.T) {
-	resp := tevents.ApiName()
+	resp := tevents.APIName()
 	expected := "events"
 
 	if expected != resp {
@@ -265,7 +265,7 @@ func TestEventGet(t *testing.T) {
 func TestEventGetNilResult(t *testing.T) {
 	// Setup our test server
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(666)
+		w.WriteHeader(http.StatusNotFound)
 		io.WriteString(w, "")
 	}))
 	defer ts.Close()
@@ -292,12 +292,108 @@ func TestEventGetNilResult(t *testing.T) {
 	resp, _ := tsEvents.Get("test")
 
 	if resp != nil {
-		t.Error("ERROR .Get(): expected, Nil  -- But... I have no idea... ")
+		t.Error("ERROR .Get(): expected, Nil  -- But got,", resp)
 	}
 }
 func TestGetError(t *testing.T) {
 	_, err := tevents.Get("test")
 	if err == nil {
 		t.Error("ERROR .Get(): event create to fail.. but it did not. ")
+	}
+}
+
+func TestEventUpdate(t *testing.T) {
+	// Setup our test server
+	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, `{
+						"kind": "Event",
+						"apiVersion": "v1",
+						"metadata": {
+								"name": "test"
+						},
+						"message": "test"
+				}`)
+	}))
+	defer ts.Close()
+
+	// test client
+	url := strings.Replace(ts.URL, "https://", "", -1)
+	tsClient := &Client{
+		Host:     url,
+		Username: "test",
+		Password: "test",
+		http: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
+			},
+		},
+	}
+
+	tsEvents := &Events{
+		client:    tsClient,
+		Namespace: "test",
+	}
+	resp, _ := tsEvents.Update("test", &Event{
+		Message: "test",
+		Count:   1,
+	})
+	if resp.Message != "test" {
+		t.Error("ERROR .Update(): expected, \"test\"  -- But got,", resp.Message)
+	}
+}
+func TestUpdateError(t *testing.T) {
+	_, err := tevents.Update("test", &Event{
+		Message: "test",
+		Count:   1,
+	})
+	if err == nil {
+		t.Error("ERROR .Update(): event create to fail.. but it did not. ")
+	}
+}
+
+func TestEventDelete(t *testing.T) {
+	// Setup our test server
+	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, `{
+						"kind": "Event",
+						"apiVersion": "v1",
+						"metadata": {
+								"name": "test"
+						},
+						"message": "test"
+				}`)
+	}))
+	defer ts.Close()
+
+	// test client
+	url := strings.Replace(ts.URL, "https://", "", -1)
+	tsClient := &Client{
+		Host:     url,
+		Username: "test",
+		Password: "test",
+		http: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
+			},
+		},
+	}
+
+	tsEvents := &Events{
+		client:    tsClient,
+		Namespace: "test",
+	}
+	resp, _ := tsEvents.Delete("test")
+	if !resp {
+		t.Error("ERROR .Delete(): expected, \"true\"  -- But got,", resp)
+	}
+}
+func TestDeleteError(t *testing.T) {
+	_, err := tevents.Delete("test")
+	if err == nil {
+		t.Error("ERROR .Delete(): event create to fail.. but it did not. ")
 	}
 }

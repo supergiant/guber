@@ -9,15 +9,15 @@ func (r ReplicationControllers) DomainName() string {
 	return ""
 }
 
-func (r ReplicationControllers) ApiGroup() string {
+func (r ReplicationControllers) APIGroup() string {
 	return "api"
 }
 
-func (r ReplicationControllers) ApiVersion() string {
+func (r ReplicationControllers) APIVersion() string {
 	return "v1"
 }
 
-func (r ReplicationControllers) ApiName() string {
+func (r ReplicationControllers) APIName() string {
 	return "replicationcontrollers"
 }
 

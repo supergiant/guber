@@ -9,15 +9,15 @@ func (r Secrets) DomainName() string {
 	return ""
 }
 
-func (r Secrets) ApiGroup() string {
+func (r Secrets) APIGroup() string {
 	return "api"
 }
 
-func (r Secrets) ApiVersion() string {
+func (r Secrets) APIVersion() string {
 	return "v1"
 }
 
-func (r Secrets) ApiName() string {
+func (r Secrets) APIName() string {
 	return "secrets"
 }
 

@@ -55,8 +55,8 @@ func (r *Request) Resource(res Resource) *Request {
 	if res.DomainName() != "" {
 		baseurl = fmt.Sprintf("%s/%s", baseurl, res.DomainName())
 	}
-	r.baseurl = fmt.Sprintf("%s/%s/%s", baseurl, res.ApiGroup(), res.ApiVersion())
-	r.resource = res.ApiName()
+	r.baseurl = fmt.Sprintf("%s/%s/%s", baseurl, res.APIGroup(), res.APIVersion())
+	r.resource = res.APIName()
 	return r
 }
 
@@ -119,6 +119,7 @@ func (r *Request) Do() *Request {
 		} else if status := resp.Status; status[:2] != "20" {
 			errMsg := fmt.Sprintf("Status: %s, Body: %s", status, string(r.body))
 			r.error(errors.New(errMsg))
+			r.found = false
 		} else {
 			r.found = true // NOTE this only really matters for lookups, but we set it true here anyhow
 		}
