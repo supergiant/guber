@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"reflect"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 var (
@@ -25,25 +27,27 @@ var (
 // Tests the NewClient function
 func TestNewClient(t *testing.T) {
 	// Create a client
-	client := NewClient("test", "test", "test")
+	Convey("When creating a new Kubernetes client.", t, func() {
+		client := NewClient("test", "test", "test")
 
-	// Our expected output.
-	expected := &Client{
-		Host:     "test",
-		Username: "test",
-		Password: "test",
-		http: &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
+		Convey("We would expect the resulting client to look like our expected Client object.", func() {
+			// Our expected output.
+			expected := &Client{
+				Host:     "test",
+				Username: "test",
+				Password: "test",
+				http: &http.Client{
+					Transport: &http.Transport{
+						TLSClientConfig: &tls.Config{
+							InsecureSkipVerify: true,
+						},
+					},
 				},
-			},
-		},
-	}
+			}
+			So(client, ShouldResemble, expected)
 
-	if !reflect.DeepEqual(expected, client) {
-		t.Error("ERROR NewClient(): Expected,", expected, "-- But got, ", client)
-	}
+		})
+	})
 
 }
 
