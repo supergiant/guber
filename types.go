@@ -138,10 +138,15 @@ type PodSpec struct {
 	TerminationGracePeriodSeconds int                `json:"terminationGracePeriodSeconds"`
 }
 
+type PodStatus struct {
+	Phase string `json:"phase"`
+}
+
 type Pod struct {
 	*ResourceDefinition
-	Metadata *Metadata `json:"metadata"`
-	Spec     *PodSpec  `json:"spec"`
+	Metadata *Metadata  `json:"metadata"`
+	Spec     *PodSpec   `json:"spec"`
+	Status   *PodStatus `json:"status"`
 }
 
 type PodList struct {
