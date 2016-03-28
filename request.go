@@ -117,8 +117,7 @@ func (r *Request) Do() *Request {
 		if resp.StatusCode == 404 {
 			r.found = false
 		} else if status := resp.Status; status[:2] != "20" {
-			errMsg := fmt.Sprintf("Status: %s, Body: %s", status, string(r.body))
-			r.error(errors.New(errMsg))
+			r.error(fmt.Errorf("Status: %s, Body: %s", status, string(r.body)))
 			r.found = false
 		} else {
 			r.found = true // NOTE this only really matters for lookups, but we set it true here anyhow
