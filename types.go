@@ -137,6 +137,7 @@ type PodSpec struct {
 	Containers                    []*Container       `json:"containers"`
 	ImagePullSecrets              []*ImagePullSecret `json:"imagePullSecrets"`
 	TerminationGracePeriodSeconds int                `json:"terminationGracePeriodSeconds"`
+	ImagePullPolicy               string             `json:"imagePullPolicy"`
 }
 
 type PodStatus struct {
