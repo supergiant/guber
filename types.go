@@ -121,6 +121,7 @@ type EnvVar struct {
 type Container struct {
 	Name         string           `json:"name"`
 	Image        string           `json:"image"`
+	Command      []string         `json:"command"`
 	Resources    *Resources       `json:"resources"`
 	Ports        []*ContainerPort `json:"ports"`
 	VolumeMounts []*VolumeMount   `json:"volumeMounts"`
