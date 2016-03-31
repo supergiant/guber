@@ -14,3 +14,7 @@ install:
 script:
  - go test -v ./...
  - $HOME/gopath/bin/goveralls -service=travis-ci
+
+ notifications:
+   slack:
+     secure: u2FdlOGvhlGeak7Pcnb7AOiNspC8Gi83xQsRgBxwtRy1zj/bxHVHeDWQMlfbmpzGoQelWa33kxym1l+UIISXyWfxS1v/tIbbWH2kjkDlVj/saQBHBIG/I5YsSNgwTmKiAO/Kfvng/vRInQ/AI6+aJDAJN71T6PGkbVMK0Tnsim6ojBowDbzhJouXLIz6H7hqA/8CNpS/NgqGJ5sPUY3TWr9f769q+zohP54Tc3t/NveHLYaoiKgwdi10+587F1jOeWkP0T5Z62o3qEg+W3MpKkAt8Ev02EXfk+DGTSLxXDlN9MTLapfUTrX/6B0m5/ttDpOv6x35amE5rrO2peDGB+cWcqx/JyuoPN9SelYL9uINRrgAF+5pqvI8fqUiXHFHUOMJ0w+wlD/tZyrpS1WZN9kgzXQbQz5UAkzwQ8utfQRY5RgFvSuBPUvUvxTsszWo4rZC3refZ3/b6u1PnPstOLXnxdNgbR8/pTZqDgyy8cuDzvcNTvoTFMMZ8AZxO0HTKmW1ioBkvMtWA0NZoLDXNA76kUH/zKxZ16ZYCQloxseEK9p75m+2LkA4VSB03JALtHdVW+DIanscdzX6KNSXqUtKxutGX0uFmUYTFcCXH1rDbwMTJ8wh8mCjFLlXb1v0M9w4WqRoPjIJEeyWHgQemf2tKcNLbu8BuDq2fgUN7+4=
