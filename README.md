@@ -3,7 +3,7 @@
 [GoReportCard Widget]: https://goreportcard.com/badge/github.com/supergiant/guber
 [GoReportCard]: https://goreportcard.com/report/github.com/supergiant/guber
 [GoDoc]: https://godoc.org/github.com/supergiant/guber
-[GoDoc Widget]: https://godoc.org/github.com/supergiant/guber.svg
+[GoDoc Widget]: https://godoc.org/github.com/supergiant/guber?status.svg
 [Travis]: https://travis-ci.org/supergiant/guber
 [Travis Widget]: https://travis-ci.org/supergiant/guber.svg?branch=master
 [Coverage Status]: https://coveralls.io/github/supergiant/guber?branch=master
