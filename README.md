@@ -6,8 +6,8 @@
 [GoDoc Widget]: https://godoc.org/github.com/supergiant/guber.svg
 [Travis]: https://travis-ci.org/supergiant/guber
 [Travis Widget]: https://travis-ci.org/supergiant/guber.svg?branch=master
-[Coverage Status]: https://coveralls.io/github/supergiant/guber?branch=master
-[Coverage Status Widget]: https://coveralls.io/repos/github/supergiant/guber/badge.svg?branch=master
+[Coverage Status Widget]: https://coveralls.io/github/supergiant/guber?branch=master
+[Coverage Status]: https://coveralls.io/repos/github/supergiant/guber/badge.svg?branch=master
 
 
 # Guber
