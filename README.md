@@ -7,7 +7,7 @@
 [Travis]: https://travis-ci.org/supergiant/guber
 [Travis Widget]: https://travis-ci.org/supergiant/guber.svg?branch=master
 [Coverage Status]: https://coveralls.io/github/supergiant/guber?branch=master
-[Coverage Status Widget]: https://coveralls.io/repos/github/supergiant/guber/badge.png?branch=master
+[Coverage Status Widget]: https://coveralls.io/repos/github/supergiant/guber/badge.svg?branch=master
 
 
 
