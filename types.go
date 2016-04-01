@@ -118,14 +118,19 @@ type EnvVar struct {
 	Value string `json:"value"`
 }
 
+type SecurityContext struct {
+	Privileged bool `json:"privileged"`
+}
+
 type Container struct {
-	Name         string           `json:"name"`
-	Image        string           `json:"image"`
-	Command      []string         `json:"command"`
-	Resources    *Resources       `json:"resources"`
-	Ports        []*ContainerPort `json:"ports"`
-	VolumeMounts []*VolumeMount   `json:"volumeMounts"`
-	Env          []*EnvVar        `json:"env"`
+	Name            string           `json:"name"`
+	Image           string           `json:"image"`
+	Command         []string         `json:"command"`
+	Resources       *Resources       `json:"resources"`
+	Ports           []*ContainerPort `json:"ports"`
+	VolumeMounts    []*VolumeMount   `json:"volumeMounts"`
+	Env             []*EnvVar        `json:"env"`
+	SecurityContext *SecurityContext `json:"securityContext"`
 }
 
 type ImagePullSecret struct {
