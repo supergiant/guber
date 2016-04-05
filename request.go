@@ -12,6 +12,7 @@ import (
 type Request struct {
 	client    *Client
 	method    string
+	headers   map[string]string
 	baseurl   string
 	query     string
 	resource  string
@@ -104,6 +105,10 @@ func (r *Request) Do() *Request {
 
 	req.SetBasicAuth(r.client.Username, r.client.Password)
 	r.error(err)
+
+	for k, v := range r.headers {
+		req.Header.Set(k, v)
+	}
 
 	resp, err := r.client.http.Do(req)
 	r.error(err)

@@ -60,7 +60,13 @@ func (c *Client) Post() *Request {
 
 // Patch performs a PATCH request against a Client object.
 func (c *Client) Patch() *Request {
-	return &Request{client: c, method: "PATCH"}
+	return &Request{
+		client: c,
+		method: "PATCH",
+		headers: map[string]string{
+			"Content-Type": "application/merge-patch+json",
+		},
+	}
 }
 
 // Delete performs a DELETE request against a Client object.
