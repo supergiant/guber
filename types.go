@@ -9,6 +9,7 @@ type ResourceDefinition struct {
 
 type Metadata struct {
 	Name              string            `json:"name"`
+	Namespace         string            `json:"namespace"`
 	Labels            map[string]string `json:"labels,omitempty"`
 	CreationTimestamp string            `json:"creationTimestamp,omitempty"`
 }
