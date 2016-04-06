@@ -39,11 +39,14 @@ type Client struct {
 //Functions
 
 // NewClient creates a new kubernetes client object.
-func NewClient(host string, user string, pass string) *Client {
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+func NewClient(host string, user string, pass string, httpsMode bool) *Client {
+	if httpsMode {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		return &Client{host, user, pass, &http.Client{Transport: tr}}
 	}
-	return &Client{host, user, pass, &http.Client{Transport: tr}}
+	return &Client{host, user, pass, &http.Client{}}
 }
 
 //Methods
