@@ -99,8 +99,8 @@ type VolumeMount struct {
 }
 
 type ResourceValues struct {
-	Memory string `json:"memory"`
-	CPU    string `json:"cpu"`
+	Memory string `json:"memory,omitempty"`
+	CPU    string `json:"cpu,omitempty"`
 }
 
 type Resources struct {
