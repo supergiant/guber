@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type Request struct {
@@ -83,16 +84,14 @@ func (r *Request) Query(q *QueryParams) *Request {
 		return r
 	}
 
-	// v, err := query.Values(q)
-	// if err != nil {
-	// 	panic(err) // TODO should use r.error() here probably
-	// }
-	// queryStr := v.Encode()
-
-	// TODO  -- we went with this terribly rigid strategy because of how query pkg encodes the = chars
+	var segments []string
 	if ls := q.LabelSelector; ls != "" {
-		r.query = "labelSelector=" + ls
+		segments = append(segments, "labelSelector="+ls)
 	}
+	if fs := q.FieldSelector; fs != "" {
+		segments = append(segments, "fieldSelector="+fs)
+	}
+	r.query = strings.Join(segments, "&")
 
 	return r
 }

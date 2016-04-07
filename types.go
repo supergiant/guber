@@ -222,5 +222,6 @@ type EventList struct {
 
 // TODO not sure if this should be in the types file.. related to queries, but is a Kube-specific thing
 type QueryParams struct {
-	LabelSelector string `url:"labelSelector"`
+	LabelSelector string
+	FieldSelector string
 }
