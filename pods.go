@@ -67,3 +67,11 @@ func (r *Pods) Delete(name string) (found bool, err error) {
 	req := r.client.Delete().Resource(r).Namespace(r.Namespace).Name(name).Do()
 	return req.found, req.err
 }
+
+// TODO we need resource-level methods
+func (r *Pods) Log(name string) (string, error) {
+	if _, err := r.Get(name); err != nil {
+		return "", err
+	}
+	return r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Path("log").Do().Body()
+}

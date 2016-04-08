@@ -16,6 +16,7 @@ type Request struct {
 	headers   map[string]string
 	baseurl   string
 	query     string
+	path      string
 	resource  string
 	namespace string
 	name      string
@@ -45,6 +46,9 @@ func (r *Request) url() string {
 	path = path + r.resource
 	if r.name != "" {
 		path = path + "/" + r.name
+	}
+	if r.path != "" {
+		path = path + "/" + r.path
 	}
 	if r.query != "" {
 		path = path + "?" + r.query
@@ -96,6 +100,11 @@ func (r *Request) Query(q *QueryParams) *Request {
 	return r
 }
 
+func (r *Request) Path(path string) *Request {
+	r.path = path
+	return r
+}
+
 func (r *Request) Do() *Request {
 	req, err := http.NewRequest(r.method, r.url(), bytes.NewBuffer(r.body))
 	if err != nil {
@@ -139,6 +148,10 @@ func (r *Request) readBody() {
 	body, err := ioutil.ReadAll(r.response.Body)
 	r.body = body
 	r.error(err)
+}
+
+func (r *Request) Body() (string, error) {
+	return string(r.body), r.err
 }
 
 // The exit point for a Request (where error is pooped out)
