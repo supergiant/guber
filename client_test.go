@@ -27,7 +27,7 @@ var (
 func TestCreateNewClient(t *testing.T) {
 	// Create a client
 	Convey("When creating a new Kubernetes client.", t, func() {
-		client := NewClient("test", "test", "test")
+		client := NewClient("test", "test", "test", true)
 
 		Convey("We would expect the resulting client to look like our expected Client object.", func() {
 			// Our expected output.
@@ -83,6 +83,9 @@ func TestClientPatch(t *testing.T) {
 			expected := &Request{
 				client: tClient,
 				method: "PATCH",
+				headers: map[string]string{
+					"Content-Type": "application/merge-patch+json",
+				},
 			}
 			So(resp, ShouldResemble, expected)
 		})
