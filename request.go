@@ -28,8 +28,33 @@ type Request struct {
 	// something lower-level without inspecting the error message.
 	found bool
 
-	err      error
-	response *http.Response
+	err          error
+	response     *http.Response
+	responseBody []byte
+}
+
+// Implement Stringer interface
+func (r *Request) String() string {
+	obj := struct {
+		Method       string
+		Headers      map[string]string
+		URL          string
+		Status       int
+		RequestBody  string
+		ResponseBody string
+	}{
+		r.method,
+		r.headers,
+		r.url(),
+		r.response.StatusCode,
+		string(r.body),
+		string(r.responseBody),
+	}
+	out, err := json.MarshalIndent(obj, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	return string(out)
 }
 
 func (r *Request) error(err error) {
@@ -130,12 +155,15 @@ func (r *Request) Do() *Request {
 		if resp.StatusCode == 404 {
 			r.found = false
 		} else if status := resp.Status; status[:2] != "20" {
-			r.error(fmt.Errorf("Status: %s, Body: %s", status, string(r.body)))
+			r.error(fmt.Errorf("Status: %s, Body: %s", status, string(r.responseBody)))
 			r.found = false
 		} else {
 			r.found = true // NOTE this only really matters for lookups, but we set it true here anyhow
 		}
+
+		Log.Debug(r)
 	}
+
 	return r
 }
 
@@ -146,18 +174,18 @@ func (r *Request) readBody() {
 	}
 	defer r.response.Body.Close()
 	body, err := ioutil.ReadAll(r.response.Body)
-	r.body = body
+	r.responseBody = body
 	r.error(err)
 }
 
 func (r *Request) Body() (string, error) {
-	return string(r.body), r.err
+	return string(r.responseBody), r.err
 }
 
 // The exit point for a Request (where error is pooped out)
 func (r *Request) Into(e Entity) error {
-	if r.body != nil {
-		json.Unmarshal(r.body, e)
+	if r.responseBody != nil {
+		json.Unmarshal(r.responseBody, e)
 	}
 	return r.err
 }
