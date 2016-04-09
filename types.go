@@ -154,6 +154,7 @@ type PodSpec struct {
 	ImagePullSecrets              []*ImagePullSecret `json:"imagePullSecrets"`
 	TerminationGracePeriodSeconds int                `json:"terminationGracePeriodSeconds"`
 	ImagePullPolicy               string             `json:"imagePullPolicy"`
+	RestartPolicy                 string             `json:"restartPolicy"`
 }
 
 // type ContainerStatus struct {
