@@ -107,6 +107,10 @@ func (r *Pod) Log(container string) (string, error) {
 }
 
 func (r *Pod) IsReady() bool {
+	if len(r.Status.Conditions) == 0 {
+		return false
+	}
+
 	var readyCondition *PodStatusCondition
 	for _, cond := range r.Status.Conditions {
 		if cond.Type == "Ready" {
