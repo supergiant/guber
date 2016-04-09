@@ -1,81 +1,102 @@
 package guber
 
-// Events is an object that holds a route of namespace for a client connection.
 type Events struct {
 	client    *Client
 	Namespace string
 }
 
-// DomainName returns domain name
-func (r Events) DomainName() string {
+func (c *Events) New() *Event {
+	return &Event{
+		collection: c,
+	}
+}
+
+func (c Events) DomainName() string {
 	return ""
 }
 
-// APIGroup returns the kubernetes api group.
-func (r Events) APIGroup() string {
-	return defaultAPIGroup
+func (c Events) APIGroup() string {
+	return "api"
 }
 
-// APIVersion returns the kubernetes api version.
-func (r Events) APIVersion() string {
-	return defaultAPIVersion
+func (c Events) APIVersion() string {
+	return "v1"
 }
 
-// APIName returns the "events" api name.
-func (r Events) APIName() string {
+func (c Events) APIName() string {
 	return "events"
 }
 
-// Kind returns the events object kind "Event".
-func (r Events) Kind() string {
+func (c Events) Kind() string {
 	return "Event"
 }
 
-// Create creates a new kubernetes event.
-func (r *Events) Create(e *Event) (*Event, error) {
-	if err := r.client.Post().Resource(r).Namespace(r.Namespace).Entity(e).Do().Into(e); err != nil {
+func (c *Events) Create(e *Event) (*Event, error) {
+	r := c.New()
+	if err := c.client.Post().Collection(c).Namespace(c.Namespace).Entity(e).Do().Into(r); err != nil {
 		return nil, err
 	}
-	return e, nil
+	return r, nil
 }
 
-// Query searches kubernetes events and returns in an EventList object.
-func (r *Events) Query(q *QueryParams) (*EventList, error) {
+func (c *Events) Query(q *QueryParams) (*EventList, error) {
 	list := new(EventList)
-	err := r.client.Get().Resource(r).Namespace(r.Namespace).Query(q).Do().Into(list)
-	return list, err
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Query(q).Do().Into(list); err != nil {
+		return nil, err
+	}
+	for _, r := range list.Items {
+		r.collection = c
+	}
+	return list, nil
 }
 
-// List returns a list of kuebrnetes events in an EventList object.
-func (r *Events) List() (*EventList, error) {
+func (c *Events) List() (*EventList, error) {
 	list := new(EventList)
-	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
-	return list, err
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Do().Into(list); err != nil {
+		return nil, err
+	}
+	for _, r := range list.Items {
+		r.collection = c
+	}
+	return list, nil
 }
 
-// Get gets a kubernetes object and returns and Event object.
-func (r *Events) Get(name string) (*Event, error) {
-	e := new(Event)
-	req := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do()
-	if err := req.Into(e); err != nil {
+func (c *Events) Get(name string) (*Event, error) {
+	r := c.New()
+	req := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do()
+	if err := req.Into(r); err != nil {
 		return nil, err
 	}
 	if req.found {
-		return e, nil
+		return r, nil
 	}
 	return nil, nil
 }
 
-// Update updates a event object, and returns the new Event object.
-func (r *Events) Update(name string, e *Event) (*Event, error) {
-	if err := r.client.Patch().Resource(r).Namespace(r.Namespace).Name(name).Entity(e).Do().Into(e); err != nil {
+func (c *Events) Update(name string, r *Event) (*Event, error) {
+	if err := c.client.Patch().Collection(c).Namespace(c.Namespace).Name(name).Entity(r).Do().Into(r); err != nil {
 		return nil, err
 	}
-	return e, nil
+	return r, nil
 }
 
-// Delete deletes a kuberntes event object.
-func (r *Events) Delete(name string) (found bool, err error) {
-	req := r.client.Delete().Resource(r).Namespace(r.Namespace).Name(name).Do()
+func (c *Events) Delete(name string) (found bool, err error) {
+	req := c.client.Delete().Collection(c).Namespace(c.Namespace).Name(name).Do()
 	return req.found, req.err
+}
+
+// Resource-level
+
+func (r *Event) Reload() (*Event, error) {
+	return r.collection.Get(r.Metadata.Name)
+}
+
+func (r *Event) Save() error {
+	_, err := r.collection.Update(r.Metadata.Name, r)
+	return err
+}
+
+func (r *Event) Delete() error {
+	_, err := r.collection.Delete(r.Metadata.Name)
+	return err
 }

@@ -5,65 +5,98 @@ type Secrets struct {
 	Namespace string
 }
 
-func (r Secrets) DomainName() string {
+func (c *Secrets) New() *Secret {
+	return &Secret{
+		collection: c,
+	}
+}
+
+func (c Secrets) DomainName() string {
 	return ""
 }
 
-func (r Secrets) APIGroup() string {
+func (c Secrets) APIGroup() string {
 	return "api"
 }
 
-func (r Secrets) APIVersion() string {
+func (c Secrets) APIVersion() string {
 	return "v1"
 }
 
-func (r Secrets) APIName() string {
+func (c Secrets) APIName() string {
 	return "secrets"
 }
 
-func (r Secrets) Kind() string {
+func (c Secrets) Kind() string {
 	return "Secret"
 }
 
-func (r *Secrets) Create(e *Secret) (*Secret, error) {
-	if err := r.client.Post().Resource(r).Namespace(r.Namespace).Entity(e).Do().Into(e); err != nil {
+func (c *Secrets) Create(e *Secret) (*Secret, error) {
+	r := c.New()
+	if err := c.client.Post().Collection(c).Namespace(c.Namespace).Entity(e).Do().Into(r); err != nil {
 		return nil, err
 	}
-	return e, nil
+	return r, nil
 }
 
-func (r *Secrets) Query(q *QueryParams) (*SecretList, error) {
+func (c *Secrets) Query(q *QueryParams) (*SecretList, error) {
 	list := new(SecretList)
-	err := r.client.Get().Resource(r).Namespace(r.Namespace).Query(q).Do().Into(list)
-	return list, err
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Query(q).Do().Into(list); err != nil {
+		return nil, err
+	}
+	for _, r := range list.Items {
+		r.collection = c
+	}
+	return list, nil
 }
 
-func (r *Secrets) List() (*SecretList, error) {
+func (c *Secrets) List() (*SecretList, error) {
 	list := new(SecretList)
-	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
-	return list, err
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Do().Into(list); err != nil {
+		return nil, err
+	}
+	for _, r := range list.Items {
+		r.collection = c
+	}
+	return list, nil
 }
 
-func (r *Secrets) Get(name string) (*Secret, error) {
-	e := new(Secret)
-	req := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do()
-	if err := req.Into(e); err != nil {
+func (c *Secrets) Get(name string) (*Secret, error) {
+	r := c.New()
+	req := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do()
+	if err := req.Into(r); err != nil {
 		return nil, err
 	}
 	if req.found {
-		return e, nil
+		return r, nil
 	}
 	return nil, nil
 }
 
-func (r *Secrets) Update(name string, e *Secret) (*Secret, error) {
-	if err := r.client.Patch().Resource(r).Namespace(r.Namespace).Name(name).Entity(e).Do().Into(e); err != nil {
+func (c *Secrets) Update(name string, r *Secret) (*Secret, error) {
+	if err := c.client.Patch().Collection(c).Namespace(c.Namespace).Name(name).Entity(r).Do().Into(r); err != nil {
 		return nil, err
 	}
-	return e, nil
+	return r, nil
 }
 
-func (r *Secrets) Delete(name string) (found bool, err error) {
-	req := r.client.Delete().Resource(r).Namespace(r.Namespace).Name(name).Do()
+func (c *Secrets) Delete(name string) (found bool, err error) {
+	req := c.client.Delete().Collection(c).Namespace(c.Namespace).Name(name).Do()
 	return req.found, req.err
+}
+
+// Resource-level
+
+func (r *Secret) Reload() (*Secret, error) {
+	return r.collection.Get(r.Metadata.Name)
+}
+
+func (r *Secret) Save() error {
+	_, err := r.collection.Update(r.Metadata.Name, r)
+	return err
+}
+
+func (r *Secret) Delete() error {
+	_, err := r.collection.Delete(r.Metadata.Name)
+	return err
 }

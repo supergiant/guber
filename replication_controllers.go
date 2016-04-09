@@ -5,65 +5,98 @@ type ReplicationControllers struct {
 	Namespace string
 }
 
-func (r ReplicationControllers) DomainName() string {
+func (c *ReplicationControllers) New() *ReplicationController {
+	return &ReplicationController{
+		collection: c,
+	}
+}
+
+func (c ReplicationControllers) DomainName() string {
 	return ""
 }
 
-func (r ReplicationControllers) APIGroup() string {
+func (c ReplicationControllers) APIGroup() string {
 	return "api"
 }
 
-func (r ReplicationControllers) APIVersion() string {
+func (c ReplicationControllers) APIVersion() string {
 	return "v1"
 }
 
-func (r ReplicationControllers) APIName() string {
+func (c ReplicationControllers) APIName() string {
 	return "replicationcontrollers"
 }
 
-func (r ReplicationControllers) Kind() string {
+func (c ReplicationControllers) Kind() string {
 	return "ReplicationController"
 }
 
-func (r *ReplicationControllers) Create(e *ReplicationController) (*ReplicationController, error) {
-	if err := r.client.Post().Resource(r).Namespace(r.Namespace).Entity(e).Do().Into(e); err != nil {
+func (c *ReplicationControllers) Create(e *ReplicationController) (*ReplicationController, error) {
+	r := c.New()
+	if err := c.client.Post().Collection(c).Namespace(c.Namespace).Entity(e).Do().Into(r); err != nil {
 		return nil, err
 	}
-	return e, nil
+	return r, nil
 }
 
-func (r *ReplicationControllers) Query(q *QueryParams) (*ReplicationControllerList, error) {
+func (c *ReplicationControllers) Query(q *QueryParams) (*ReplicationControllerList, error) {
 	list := new(ReplicationControllerList)
-	err := r.client.Get().Resource(r).Namespace(r.Namespace).Query(q).Do().Into(list)
-	return list, err
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Query(q).Do().Into(list); err != nil {
+		return nil, err
+	}
+	for _, r := range list.Items {
+		r.collection = c
+	}
+	return list, nil
 }
 
-func (r *ReplicationControllers) List() (*ReplicationControllerList, error) {
+func (c *ReplicationControllers) List() (*ReplicationControllerList, error) {
 	list := new(ReplicationControllerList)
-	err := r.client.Get().Resource(r).Namespace(r.Namespace).Do().Into(list)
-	return list, err
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Do().Into(list); err != nil {
+		return nil, err
+	}
+	for _, r := range list.Items {
+		r.collection = c
+	}
+	return list, nil
 }
 
-func (r *ReplicationControllers) Get(name string) (*ReplicationController, error) {
-	e := new(ReplicationController)
-	req := r.client.Get().Resource(r).Namespace(r.Namespace).Name(name).Do()
-	if err := req.Into(e); err != nil {
+func (c *ReplicationControllers) Get(name string) (*ReplicationController, error) {
+	r := c.New()
+	req := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do()
+	if err := req.Into(r); err != nil {
 		return nil, err
 	}
 	if req.found {
-		return e, nil
+		return r, nil
 	}
 	return nil, nil
 }
 
-func (r *ReplicationControllers) Update(name string, e *ReplicationController) (*ReplicationController, error) {
-	if err := r.client.Patch().Resource(r).Namespace(r.Namespace).Name(name).Entity(e).Do().Into(e); err != nil {
+func (c *ReplicationControllers) Update(name string, r *ReplicationController) (*ReplicationController, error) {
+	if err := c.client.Patch().Collection(c).Namespace(c.Namespace).Name(name).Entity(r).Do().Into(r); err != nil {
 		return nil, err
 	}
-	return e, nil
+	return r, nil
 }
 
-func (r *ReplicationControllers) Delete(name string) (found bool, err error) {
-	req := r.client.Delete().Resource(r).Namespace(r.Namespace).Name(name).Do()
+func (c *ReplicationControllers) Delete(name string) (found bool, err error) {
+	req := c.client.Delete().Collection(c).Namespace(c.Namespace).Name(name).Do()
 	return req.found, req.err
+}
+
+// Resource-level
+
+func (r *ReplicationController) Reload() (*ReplicationController, error) {
+	return r.collection.Get(r.Metadata.Name)
+}
+
+func (r *ReplicationController) Save() error {
+	_, err := r.collection.Update(r.Metadata.Name, r)
+	return err
+}
+
+func (r *ReplicationController) Delete() error {
+	_, err := r.collection.Delete(r.Metadata.Name)
+	return err
 }

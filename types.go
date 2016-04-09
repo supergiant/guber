@@ -17,7 +17,9 @@ type Metadata struct {
 // Namespace
 //==============================================================================
 type Namespace struct {
+	collection *Namespaces
 	*ResourceDefinition
+
 	Metadata *Metadata `json:"metadata"`
 }
 
@@ -47,10 +49,16 @@ type NodeStatus struct {
 }
 
 type Node struct {
+	collection *Nodes
 	*ResourceDefinition
+
 	Metadata *Metadata   `json:"metadata"`
 	Spec     *NodeSpec   `json:"spec"`
 	Status   *NodeStatus `json:"status"`
+}
+
+type NodeList struct {
+	Items []*Node `json:"items"`
 }
 
 // ReplicationController
@@ -71,7 +79,9 @@ type ReplicationControllerStatus struct {
 }
 
 type ReplicationController struct {
+	collection *ReplicationControllers
 	*ResourceDefinition
+
 	Metadata *Metadata                    `json:"metadata"`
 	Spec     *ReplicationControllerSpec   `json:"spec"`
 	Status   *ReplicationControllerStatus `json:"status,omitempty"`
@@ -163,14 +173,16 @@ type PodStatus struct {
 }
 
 type Pod struct {
+	collection *Pods
 	*ResourceDefinition
+
 	Metadata *Metadata  `json:"metadata"`
 	Spec     *PodSpec   `json:"spec"`
 	Status   *PodStatus `json:"status"`
 }
 
 type PodList struct {
-	Items []*Pod
+	Items []*Pod `json:"items"`
 }
 
 // Service
@@ -192,7 +204,9 @@ type ServiceSpec struct {
 }
 
 type Service struct {
+	collection *Services
 	*ResourceDefinition
+
 	Metadata *Metadata    `json:"metadata"`
 	Spec     *ServiceSpec `json:"spec"`
 	// Status   *ServiceStatus `json:"status"`
@@ -205,7 +219,9 @@ type ServiceList struct {
 // Secret
 //==============================================================================
 type Secret struct {
+	collection *Secrets
 	*ResourceDefinition
+
 	Metadata *Metadata         `json:"metadata"`
 	Type     string            `json:"type"`
 	Data     map[string]string `json:"data"`
@@ -222,10 +238,13 @@ type Source struct {
 }
 
 type Event struct {
+	collection *Events
 	*ResourceDefinition
-	Message string  `json:"message"`
-	Count   int     `json:"count"`
-	Source  *Source `json:"source"`
+
+	Metadata *Metadata `json:"metadata"`
+	Message  string    `json:"message"`
+	Count    int       `json:"count"`
+	Source   *Source   `json:"source"`
 }
 
 type EventList struct {

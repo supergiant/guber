@@ -56,13 +56,13 @@ func (r *Request) url() string {
 	return r.baseurl + "/" + path
 }
 
-func (r *Request) Resource(res Resource) *Request {
+func (r *Request) Collection(c Collection) *Request {
 	baseurl := fmt.Sprintf("https://%s", r.client.Host)
-	if res.DomainName() != "" {
-		baseurl = fmt.Sprintf("%s/%s", baseurl, res.DomainName())
+	if c.DomainName() != "" {
+		baseurl = fmt.Sprintf("%s/%s", baseurl, c.DomainName())
 	}
-	r.baseurl = fmt.Sprintf("%s/%s/%s", baseurl, res.APIGroup(), res.APIVersion())
-	r.resource = res.APIName()
+	r.baseurl = fmt.Sprintf("%s/%s/%s", baseurl, c.APIGroup(), c.APIVersion())
+	r.resource = c.APIName()
 	return r
 }
 
