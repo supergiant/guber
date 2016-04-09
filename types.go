@@ -146,8 +146,20 @@ type PodSpec struct {
 	ImagePullPolicy               string             `json:"imagePullPolicy"`
 }
 
+// type ContainerStatus struct {
+// 	Name string `json:"name"`
+// 	...
+// }
+
+type PodStatusCondition struct {
+	Type   string `json:"type"`
+	Status string `json:"status"`
+}
+
 type PodStatus struct {
-	Phase string `json:"phase"`
+	Phase             string                `json:"phase"`
+	Conditions        []*PodStatusCondition `json:"conditions"`
+	ContainerStatuses []interface{}         `json:"containerStatuses"`
 }
 
 type Pod struct {
