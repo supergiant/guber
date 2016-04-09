@@ -17,8 +17,8 @@ var (
 type Entity interface {
 }
 
-// Resource holds interfaces to kubernetes api artifacts.
-type Resource interface {
+// Collection holds interfaces to kubernetes api artifacts.
+type Collection interface {
 	DomainName() string // empty unless something like ThirdPartyResource
 	APIGroup() string   // usually "api"
 	APIVersion() string // usually "v1"

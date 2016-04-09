@@ -1,36 +1,36 @@
 package guber
 
-type Namespaces struct {
+type Nodes struct {
 	client *Client
 }
 
-func (c *Namespaces) New() *Namespace {
-	return &Namespace{
+func (c *Nodes) New() *Node {
+	return &Node{
 		collection: c,
 	}
 }
 
-func (c Namespaces) DomainName() string {
+func (c Nodes) DomainName() string {
 	return ""
 }
 
-func (c Namespaces) APIGroup() string {
+func (c Nodes) APIGroup() string {
 	return "api"
 }
 
-func (c Namespaces) APIVersion() string {
+func (c Nodes) APIVersion() string {
 	return "v1"
 }
 
-func (c Namespaces) APIName() string {
-	return "namespaces"
+func (c Nodes) APIName() string {
+	return "nodes"
 }
 
-func (c Namespaces) Kind() string {
-	return "Namespace"
+func (c Nodes) Kind() string {
+	return "Node"
 }
 
-func (c *Namespaces) Create(e *Namespace) (*Namespace, error) {
+func (c *Nodes) Create(e *Node) (*Node, error) {
 	r := c.New()
 	if err := c.client.Post().Collection(c).Entity(e).Do().Into(r); err != nil {
 		return nil, err
@@ -38,8 +38,8 @@ func (c *Namespaces) Create(e *Namespace) (*Namespace, error) {
 	return r, nil
 }
 
-func (c *Namespaces) Query(q *QueryParams) (*NamespaceList, error) {
-	list := new(NamespaceList)
+func (c *Nodes) Query(q *QueryParams) (*NodeList, error) {
+	list := new(NodeList)
 	if err := c.client.Get().Collection(c).Query(q).Do().Into(list); err != nil {
 		return nil, err
 	}
@@ -49,8 +49,8 @@ func (c *Namespaces) Query(q *QueryParams) (*NamespaceList, error) {
 	return list, nil
 }
 
-func (c *Namespaces) List() (*NamespaceList, error) {
-	list := new(NamespaceList)
+func (c *Nodes) List() (*NodeList, error) {
+	list := new(NodeList)
 	if err := c.client.Get().Collection(c).Do().Into(list); err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (c *Namespaces) List() (*NamespaceList, error) {
 	return list, nil
 }
 
-func (c *Namespaces) Get(name string) (*Namespace, error) {
+func (c *Nodes) Get(name string) (*Node, error) {
 	r := c.New()
 	req := c.client.Get().Collection(c).Name(name).Do()
 	if err := req.Into(r); err != nil {
@@ -72,30 +72,30 @@ func (c *Namespaces) Get(name string) (*Namespace, error) {
 	return nil, nil
 }
 
-func (c *Namespaces) Update(name string, r *Namespace) (*Namespace, error) {
+func (c *Nodes) Update(name string, r *Node) (*Node, error) {
 	if err := c.client.Patch().Collection(c).Name(name).Entity(r).Do().Into(r); err != nil {
 		return nil, err
 	}
 	return r, nil
 }
 
-func (c *Namespaces) Delete(name string) (found bool, err error) {
+func (c *Nodes) Delete(name string) (found bool, err error) {
 	req := c.client.Delete().Collection(c).Name(name).Do()
 	return req.found, req.err
 }
 
 // Resource-level
 
-func (r *Namespace) Reload() (*Namespace, error) {
+func (r *Node) Reload() (*Node, error) {
 	return r.collection.Get(r.Metadata.Name)
 }
 
-func (r *Namespace) Save() error {
+func (r *Node) Save() error {
 	_, err := r.collection.Update(r.Metadata.Name, r)
 	return err
 }
 
-func (r *Namespace) Delete() error {
+func (r *Node) Delete() error {
 	_, err := r.collection.Delete(r.Metadata.Name)
 	return err
 }
