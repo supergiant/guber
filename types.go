@@ -157,10 +157,32 @@ type PodSpec struct {
 	RestartPolicy                 string             `json:"restartPolicy"`
 }
 
-// type ContainerStatus struct {
-// 	Name string `json:"name"`
-// 	...
-// }
+type ContainerStateRunning struct {
+	StartedAt string `json:"startedAt"` // TODO should be time type
+}
+
+type ContainerStateTerminated struct {
+	ExitCode   int    `json:"exitcode"`
+	StartedAt  string `json:"startedAt"`  // TODO should be time type
+	FinishedAt string `json:"finishedAt"` // TODO should be time type
+	Reason     string `json:"reason"`
+}
+
+type ContainerState struct {
+	Running    *ContainerStateRunning    `json:"running"`
+	Terminated *ContainerStateTerminated `json:"terminated"`
+}
+
+type ContainerStatus struct {
+	ContainerID  string          `json:"containerID"`
+	Image        string          `json:"image"`
+	ImageID      string          `json:"imageID"`
+	Name         string          `json:"name"`
+	Ready        bool            `json:"ready"`
+	RestartCount int             `json:"restartCount"`
+	State        *ContainerState `json:"state"`
+	LastState    *ContainerState `json:"state"`
+}
 
 type PodStatusCondition struct {
 	Type   string `json:"type"`
@@ -170,7 +192,7 @@ type PodStatusCondition struct {
 type PodStatus struct {
 	Phase             string                `json:"phase"`
 	Conditions        []*PodStatusCondition `json:"conditions"`
-	ContainerStatuses []interface{}         `json:"containerStatuses"`
+	ContainerStatuses []*ContainerStatus    `json:"containerStatuses"`
 }
 
 type Pod struct {
