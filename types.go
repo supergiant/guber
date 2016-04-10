@@ -142,6 +142,7 @@ type Container struct {
 	VolumeMounts    []*VolumeMount   `json:"volumeMounts"`
 	Env             []*EnvVar        `json:"env"`
 	SecurityContext *SecurityContext `json:"securityContext"`
+	ImagePullPolicy string           `json:"imagePullPolicy"`
 }
 
 type ImagePullSecret struct {
@@ -153,7 +154,6 @@ type PodSpec struct {
 	Containers                    []*Container       `json:"containers"`
 	ImagePullSecrets              []*ImagePullSecret `json:"imagePullSecrets"`
 	TerminationGracePeriodSeconds int                `json:"terminationGracePeriodSeconds"`
-	ImagePullPolicy               string             `json:"imagePullPolicy"`
 	RestartPolicy                 string             `json:"restartPolicy"`
 }
 
