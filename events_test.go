@@ -18,56 +18,6 @@ var (
 	}
 )
 
-func TestEventsDomainName(t *testing.T) {
-	Convey("When calling the .DomainName() on an Events object.", t, func() {
-		resp := tevents.DomainName()
-		Convey("We should expect to get a blank string return.", func() {
-			expected := ""
-			So(resp, ShouldEqual, expected)
-		})
-	})
-}
-
-func TestEventsAPIGroup(t *testing.T) {
-	Convey("When calling the .APIGroup() on an Events object.", t, func() {
-		resp := tevents.APIGroup()
-		Convey("We should expect to get a string \"api\" return.", func() {
-			expected := "api"
-			So(resp, ShouldEqual, expected)
-		})
-	})
-}
-
-func TestEventsAPIVersion(t *testing.T) {
-	Convey("When calling the .APIVersion() on an Events object.", t, func() {
-		resp := tevents.APIVersion()
-		Convey("We should expect to get a string \"v1\" return.", func() {
-			expected := "v1"
-			So(resp, ShouldEqual, expected)
-		})
-	})
-}
-
-func TestEventsAPIName(t *testing.T) {
-	Convey("When calling the .APIName() on an Events object.", t, func() {
-		resp := tevents.APIName()
-		Convey("We should expect to get a string \"events\" return.", func() {
-			expected := "events"
-			So(resp, ShouldEqual, expected)
-		})
-	})
-}
-
-func TestEventsKind(t *testing.T) {
-	Convey("When calling the .Kind() on an Events object.", t, func() {
-		resp := tevents.Kind()
-		Convey("We should expect to get a string \"Event\" return.", func() {
-			expected := "Event"
-			So(resp, ShouldEqual, expected)
-		})
-	})
-}
-
 func TestEventsCreate(t *testing.T) {
 	Convey("We start a mock api server.", t, func() {
 		ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

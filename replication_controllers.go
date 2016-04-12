@@ -1,34 +1,38 @@
 package guber
 
+// ReplicationControllerCollection is a Collection interface for ReplicationControllers.
+type ReplicationControllerCollection interface {
+	Meta() *CollectionMeta
+	New() *ReplicationController
+	Create(e *ReplicationController) (*ReplicationController, error)
+	Query(q *QueryParams) (*ReplicationControllerList, error)
+	List() (*ReplicationControllerList, error)
+	Get(name string) (*ReplicationController, error)
+	Update(name string, r *ReplicationController) (*ReplicationController, error)
+	Delete(name string) (found bool, err error)
+}
+
+// ReplicationControllers implmenets ReplicationControllerCollection.
 type ReplicationControllers struct {
-	client    *Client
+	client    *RealClient
 	Namespace string
+}
+
+// Meta implements the Collection interface.
+func (c *ReplicationControllers) Meta() *CollectionMeta {
+	return &CollectionMeta{
+		DomainName: "",
+		APIGroup:   "api",
+		APIVersion: "v1",
+		APIName:    "replicationcontrollers",
+		Kind:       "ReplicationController",
+	}
 }
 
 func (c *ReplicationControllers) New() *ReplicationController {
 	return &ReplicationController{
 		collection: c,
 	}
-}
-
-func (c ReplicationControllers) DomainName() string {
-	return ""
-}
-
-func (c ReplicationControllers) APIGroup() string {
-	return "api"
-}
-
-func (c ReplicationControllers) APIVersion() string {
-	return "v1"
-}
-
-func (c ReplicationControllers) APIName() string {
-	return "replicationcontrollers"
-}
-
-func (c ReplicationControllers) Kind() string {
-	return "ReplicationController"
 }
 
 func (c *ReplicationControllers) Create(e *ReplicationController) (*ReplicationController, error) {

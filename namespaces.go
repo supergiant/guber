@@ -1,33 +1,37 @@
 package guber
 
+// NamespaceCollection is a Collection interface for Namespaces.
+type NamespaceCollection interface {
+	Meta() *CollectionMeta
+	New() *Namespace
+	Create(e *Namespace) (*Namespace, error)
+	Query(q *QueryParams) (*NamespaceList, error)
+	List() (*NamespaceList, error)
+	Get(name string) (*Namespace, error)
+	Update(name string, r *Namespace) (*Namespace, error)
+	Delete(name string) (found bool, err error)
+}
+
+// Namespaces implements NamespaceCollection.
 type Namespaces struct {
-	client *Client
+	client *RealClient
+}
+
+// Meta implements the Collection interface.
+func (c *Namespaces) Meta() *CollectionMeta {
+	return &CollectionMeta{
+		DomainName: "",
+		APIGroup:   "api",
+		APIVersion: "v1",
+		APIName:    "namespaces",
+		Kind:       "Namespace",
+	}
 }
 
 func (c *Namespaces) New() *Namespace {
 	return &Namespace{
 		collection: c,
 	}
-}
-
-func (c Namespaces) DomainName() string {
-	return ""
-}
-
-func (c Namespaces) APIGroup() string {
-	return "api"
-}
-
-func (c Namespaces) APIVersion() string {
-	return "v1"
-}
-
-func (c Namespaces) APIName() string {
-	return "namespaces"
-}
-
-func (c Namespaces) Kind() string {
-	return "Namespace"
 }
 
 func (c *Namespaces) Create(e *Namespace) (*Namespace, error) {
