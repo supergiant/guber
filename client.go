@@ -60,9 +60,9 @@ type RealClient struct {
 }
 
 // NewClient creates a new Client.
-func NewClient(host string, user string, pass string, httpsMode bool) Client {
+func NewClient(host string, user string, pass string, insecureHTTPS bool) Client {
 	httpClient := new(http.Client)
-	if httpsMode {
+	if insecureHTTPS {
 		httpClient.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
