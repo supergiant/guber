@@ -1,34 +1,38 @@
 package guber
 
+// ServiceCollection is a Collection interface for Services.
+type ServiceCollection interface {
+	Meta() *CollectionMeta
+	New() *Service
+	Create(e *Service) (*Service, error)
+	Query(q *QueryParams) (*ServiceList, error)
+	List() (*ServiceList, error)
+	Get(name string) (*Service, error)
+	Update(name string, r *Service) (*Service, error)
+	Delete(name string) (found bool, err error)
+}
+
+// Services implmenets ServiceCollection.
 type Services struct {
-	client    *Client
+	client    *RealClient
 	Namespace string
+}
+
+// Meta implements the Collection interface.
+func (c *Services) Meta() *CollectionMeta {
+	return &CollectionMeta{
+		DomainName: "",
+		APIGroup:   "api",
+		APIVersion: "v1",
+		APIName:    "services",
+		Kind:       "Service",
+	}
 }
 
 func (c *Services) New() *Service {
 	return &Service{
 		collection: c,
 	}
-}
-
-func (c Services) DomainName() string {
-	return ""
-}
-
-func (c Services) APIGroup() string {
-	return "api"
-}
-
-func (c Services) APIVersion() string {
-	return "v1"
-}
-
-func (c Services) APIName() string {
-	return "services"
-}
-
-func (c Services) Kind() string {
-	return "Service"
 }
 
 func (c *Services) Create(e *Service) (*Service, error) {

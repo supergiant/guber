@@ -1,34 +1,38 @@
 package guber
 
+// PodCollection is a Collection interface for Pods.
+type PodCollection interface {
+	Meta() *CollectionMeta
+	New() *Pod
+	Create(e *Pod) (*Pod, error)
+	Query(q *QueryParams) (*PodList, error)
+	List() (*PodList, error)
+	Get(name string) (*Pod, error)
+	Update(name string, r *Pod) (*Pod, error)
+	Delete(name string) (found bool, err error)
+}
+
+// Pods implmenets PodCollection.
 type Pods struct {
-	client    *Client
+	client    *RealClient
 	Namespace string
+}
+
+// Meta implements the Collection interface.
+func (c *Pods) Meta() *CollectionMeta {
+	return &CollectionMeta{
+		DomainName: "",
+		APIGroup:   "api",
+		APIVersion: "v1",
+		APIName:    "pods",
+		Kind:       "Pod",
+	}
 }
 
 func (c *Pods) New() *Pod {
 	return &Pod{
 		collection: c,
 	}
-}
-
-func (c Pods) DomainName() string {
-	return ""
-}
-
-func (c Pods) APIGroup() string {
-	return "api"
-}
-
-func (c Pods) APIVersion() string {
-	return "v1"
-}
-
-func (c Pods) APIName() string {
-	return "pods"
-}
-
-func (c Pods) Kind() string {
-	return "Pod"
 }
 
 func (c *Pods) Create(e *Pod) (*Pod, error) {

@@ -1,33 +1,37 @@
 package guber
 
+// NodeCollection is a Collection interface for Nodes.
+type NodeCollection interface {
+	Meta() *CollectionMeta
+	New() *Node
+	Create(e *Node) (*Node, error)
+	Query(q *QueryParams) (*NodeList, error)
+	List() (*NodeList, error)
+	Get(name string) (*Node, error)
+	Update(name string, r *Node) (*Node, error)
+	Delete(name string) (found bool, err error)
+}
+
+// Nodes implmenets NodeCollection.
 type Nodes struct {
-	client *Client
+	client *RealClient
+}
+
+// Meta implements the Collection interface.
+func (c *Nodes) Meta() *CollectionMeta {
+	return &CollectionMeta{
+		DomainName: "",
+		APIGroup:   "api",
+		APIVersion: "v1",
+		APIName:    "nodes",
+		Kind:       "Node",
+	}
 }
 
 func (c *Nodes) New() *Node {
 	return &Node{
 		collection: c,
 	}
-}
-
-func (c Nodes) DomainName() string {
-	return ""
-}
-
-func (c Nodes) APIGroup() string {
-	return "api"
-}
-
-func (c Nodes) APIVersion() string {
-	return "v1"
-}
-
-func (c Nodes) APIName() string {
-	return "nodes"
-}
-
-func (c Nodes) Kind() string {
-	return "Node"
 }
 
 func (c *Nodes) Create(e *Node) (*Node, error) {

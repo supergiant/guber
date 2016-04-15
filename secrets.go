@@ -1,34 +1,38 @@
 package guber
 
+// SecretCollection is a Collection interface for Secrets.
+type SecretCollection interface {
+	Meta() *CollectionMeta
+	New() *Secret
+	Create(e *Secret) (*Secret, error)
+	Query(q *QueryParams) (*SecretList, error)
+	List() (*SecretList, error)
+	Get(name string) (*Secret, error)
+	Update(name string, r *Secret) (*Secret, error)
+	Delete(name string) (found bool, err error)
+}
+
+// Secrets implmenets SecretCollection.
 type Secrets struct {
-	client    *Client
+	client    *RealClient
 	Namespace string
+}
+
+// Meta implements the Collection interface.
+func (c *Secrets) Meta() *CollectionMeta {
+	return &CollectionMeta{
+		DomainName: "",
+		APIGroup:   "api",
+		APIVersion: "v1",
+		APIName:    "secrets",
+		Kind:       "Secret",
+	}
 }
 
 func (c *Secrets) New() *Secret {
 	return &Secret{
 		collection: c,
 	}
-}
-
-func (c Secrets) DomainName() string {
-	return ""
-}
-
-func (c Secrets) APIGroup() string {
-	return "api"
-}
-
-func (c Secrets) APIVersion() string {
-	return "v1"
-}
-
-func (c Secrets) APIName() string {
-	return "secrets"
-}
-
-func (c Secrets) Kind() string {
-	return "Secret"
 }
 
 func (c *Secrets) Create(e *Secret) (*Secret, error) {

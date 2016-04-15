@@ -1,34 +1,38 @@
 package guber
 
+// EventCollection is a Collection interface for Events.
+type EventCollection interface {
+	Meta() *CollectionMeta
+	New() *Event
+	Create(e *Event) (*Event, error)
+	Query(q *QueryParams) (*EventList, error)
+	List() (*EventList, error)
+	Get(name string) (*Event, error)
+	Update(name string, r *Event) (*Event, error)
+	Delete(name string) (found bool, err error)
+}
+
+// Events implmenets EventCollection.
 type Events struct {
-	client    *Client
+	client    *RealClient
 	Namespace string
+}
+
+// Meta implements the Collection interface.
+func (c *Events) Meta() *CollectionMeta {
+	return &CollectionMeta{
+		DomainName: "",
+		APIGroup:   "api",
+		APIVersion: "v1",
+		APIName:    "events",
+		Kind:       "Event",
+	}
 }
 
 func (c *Events) New() *Event {
 	return &Event{
 		collection: c,
 	}
-}
-
-func (c Events) DomainName() string {
-	return ""
-}
-
-func (c Events) APIGroup() string {
-	return "api"
-}
-
-func (c Events) APIVersion() string {
-	return "v1"
-}
-
-func (c Events) APIName() string {
-	return "events"
-}
-
-func (c Events) Kind() string {
-	return "Event"
 }
 
 func (c *Events) Create(e *Event) (*Event, error) {

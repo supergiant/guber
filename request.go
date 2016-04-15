@@ -7,11 +7,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"path"
 	"strings"
 )
 
 type Request struct {
-	client    *Client
+	client    *RealClient
 	method    string
 	headers   map[string]string
 	baseurl   string
@@ -64,30 +65,21 @@ func (r *Request) error(err error) {
 }
 
 func (r *Request) url() string {
-	path := ""
+	resourcePath := path.Join(r.resource, r.name, r.path)
+
 	if r.namespace != "" {
-		path = fmt.Sprintf("namespaces/%s/", r.namespace)
-	}
-	path = path + r.resource
-	if r.name != "" {
-		path = path + "/" + r.name
-	}
-	if r.path != "" {
-		path = path + "/" + r.path
+		resourcePath = path.Join("namespaces", r.namespace, resourcePath)
 	}
 	if r.query != "" {
-		path = path + "?" + r.query
+		resourcePath += "?" + r.query
 	}
-	return r.baseurl + "/" + path
+	return r.baseurl + "/" + resourcePath
 }
 
 func (r *Request) Collection(c Collection) *Request {
-	baseurl := fmt.Sprintf("https://%s", r.client.Host)
-	if c.DomainName() != "" {
-		baseurl = fmt.Sprintf("%s/%s", baseurl, c.DomainName())
-	}
-	r.baseurl = fmt.Sprintf("%s/%s/%s", baseurl, c.APIGroup(), c.APIVersion())
-	r.resource = c.APIName()
+	m := c.Meta()
+	r.baseurl = "https://" + path.Join(r.client.Host, m.DomainName, m.APIGroup, m.APIVersion)
+	r.resource = m.APIName
 	return r
 }
 
