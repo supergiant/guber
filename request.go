@@ -15,7 +15,7 @@ type Request struct {
 	client    *RealClient
 	method    string
 	headers   map[string]string
-	baseurl   string
+	basePath  string
 	query     string
 	path      string
 	resource  string
@@ -73,12 +73,12 @@ func (r *Request) url() string {
 	if r.query != "" {
 		resourcePath += "?" + r.query
 	}
-	return r.baseurl + "/" + resourcePath
+	return "https://" + path.Join(r.client.Host, r.basePath, resourcePath)
 }
 
 func (r *Request) Collection(c Collection) *Request {
 	m := c.Meta()
-	r.baseurl = "https://" + path.Join(r.client.Host, m.DomainName, m.APIGroup, m.APIVersion)
+	r.basePath = path.Join(m.DomainName, m.APIGroup, m.APIVersion)
 	r.resource = m.APIName
 	return r
 }

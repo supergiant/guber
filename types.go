@@ -279,3 +279,20 @@ type QueryParams struct {
 	LabelSelector string
 	FieldSelector string
 }
+
+type HeapsterStatMetric struct {
+	Average    int `json:"average"`
+	Percentile int `json:"percentile"`
+	Max        int `json:"max"`
+}
+
+type HeapsterStatPeriods struct {
+	Minute *HeapsterStatMetric `json:"minute"`
+	Hour   *HeapsterStatMetric `json:"hour"`
+	Day    *HeapsterStatMetric `json:"day"`
+}
+
+type HeapsterStats struct {
+	Uptime int `json:"uptime"`
+	Stats  map[string]*HeapsterStatPeriods
+}

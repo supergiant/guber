@@ -103,3 +103,28 @@ func (r *Node) Delete() error {
 	_, err := r.collection.Delete(r.Metadata.Name)
 	return err
 }
+
+func (r *Node) IsOutOfDisk() bool {
+
+	// TODO repeats code in pod.IsReady(), make helper for getting condition
+
+	if len(r.Status.Conditions) == 0 {
+		return false
+	}
+
+	var condition *NodeStatusCondition
+	for _, cond := range r.Status.Conditions {
+		if cond.Type == "OutOfDisk" {
+			condition = cond
+			break
+		}
+	}
+	return condition.Status == "True"
+}
+
+func (r *Node) HeapsterStats() (*HeapsterStats, error) {
+	path := "api/v1/proxy/namespaces/kube-system/services/heapster/api/v1/model/nodes/" + r.Metadata.Name + "/stats"
+	out := new(HeapsterStats)
+	err := r.collection.client.Get().Path(path).Do().Into(out)
+	return out, err
+}
