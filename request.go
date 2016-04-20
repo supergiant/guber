@@ -11,6 +11,12 @@ import (
 	"strings"
 )
 
+type Error404 struct{}
+
+func (e *Error404) Error() string {
+	return "Resource not found"
+}
+
 type Request struct {
 	client    *RealClient
 	method    string
@@ -22,12 +28,6 @@ type Request struct {
 	namespace string
 	name      string
 	body      []byte
-
-	// NOTE this is used distinct from err, because a 404 is not technically an
-	// error, except to the end-user who expects a resource to be there.
-	// Without this, we don't have a way to determine if an err was a 404 or
-	// something lower-level without inspecting the error message.
-	found bool
 
 	err          error
 	response     *http.Response
@@ -145,12 +145,9 @@ func (r *Request) Do() *Request {
 		r.readBody()
 
 		if resp.StatusCode == 404 {
-			r.found = false
+			r.error(new(Error404))
 		} else if status := resp.Status; status[:2] != "20" {
 			r.error(fmt.Errorf("Status: %s, Body: %s", status, string(r.responseBody)))
-			r.found = false
-		} else {
-			r.found = true // NOTE this only really matters for lookups, but we set it true here anyhow
 		}
 
 		Log.Debug(r)

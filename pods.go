@@ -9,7 +9,7 @@ type PodCollection interface {
 	List() (*PodList, error)
 	Get(name string) (*Pod, error)
 	Update(name string, r *Pod) (*Pod, error)
-	Delete(name string) (found bool, err error)
+	Delete(name string) error
 }
 
 // Pods implmenets PodCollection.
@@ -67,14 +67,10 @@ func (c *Pods) List() (*PodList, error) {
 
 func (c *Pods) Get(name string) (*Pod, error) {
 	r := c.New()
-	req := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do()
-	if err := req.Into(r); err != nil {
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do().Into(r); err != nil {
 		return nil, err
 	}
-	if req.found {
-		return r, nil
-	}
-	return nil, nil
+	return r, nil
 }
 
 func (c *Pods) Update(name string, r *Pod) (*Pod, error) {
@@ -84,9 +80,9 @@ func (c *Pods) Update(name string, r *Pod) (*Pod, error) {
 	return r, nil
 }
 
-func (c *Pods) Delete(name string) (found bool, err error) {
+func (c *Pods) Delete(name string) error {
 	req := c.client.Delete().Collection(c).Namespace(c.Namespace).Name(name).Do()
-	return req.found, req.err
+	return req.err
 }
 
 // Resource-level
@@ -101,8 +97,7 @@ func (r *Pod) Save() error {
 }
 
 func (r *Pod) Delete() error {
-	_, err := r.collection.Delete(r.Metadata.Name)
-	return err
+	return r.collection.Delete(r.Metadata.Name)
 }
 
 func (r *Pod) Log(container string) (string, error) {

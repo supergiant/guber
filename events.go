@@ -9,7 +9,7 @@ type EventCollection interface {
 	List() (*EventList, error)
 	Get(name string) (*Event, error)
 	Update(name string, r *Event) (*Event, error)
-	Delete(name string) (found bool, err error)
+	Delete(name string) error
 }
 
 // Events implmenets EventCollection.
@@ -67,14 +67,10 @@ func (c *Events) List() (*EventList, error) {
 
 func (c *Events) Get(name string) (*Event, error) {
 	r := c.New()
-	req := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do()
-	if err := req.Into(r); err != nil {
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do().Into(r); err != nil {
 		return nil, err
 	}
-	if req.found {
-		return r, nil
-	}
-	return nil, nil
+	return r, nil
 }
 
 func (c *Events) Update(name string, r *Event) (*Event, error) {
@@ -84,9 +80,9 @@ func (c *Events) Update(name string, r *Event) (*Event, error) {
 	return r, nil
 }
 
-func (c *Events) Delete(name string) (found bool, err error) {
+func (c *Events) Delete(name string) error {
 	req := c.client.Delete().Collection(c).Namespace(c.Namespace).Name(name).Do()
-	return req.found, req.err
+	return req.err
 }
 
 // Resource-level
@@ -101,6 +97,5 @@ func (r *Event) Save() error {
 }
 
 func (r *Event) Delete() error {
-	_, err := r.collection.Delete(r.Metadata.Name)
-	return err
+	return r.collection.Delete(r.Metadata.Name)
 }

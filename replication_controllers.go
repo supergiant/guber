@@ -9,7 +9,7 @@ type ReplicationControllerCollection interface {
 	List() (*ReplicationControllerList, error)
 	Get(name string) (*ReplicationController, error)
 	Update(name string, r *ReplicationController) (*ReplicationController, error)
-	Delete(name string) (found bool, err error)
+	Delete(name string) error
 }
 
 // ReplicationControllers implmenets ReplicationControllerCollection.
@@ -67,14 +67,10 @@ func (c *ReplicationControllers) List() (*ReplicationControllerList, error) {
 
 func (c *ReplicationControllers) Get(name string) (*ReplicationController, error) {
 	r := c.New()
-	req := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do()
-	if err := req.Into(r); err != nil {
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do().Into(r); err != nil {
 		return nil, err
 	}
-	if req.found {
-		return r, nil
-	}
-	return nil, nil
+	return r, nil
 }
 
 func (c *ReplicationControllers) Update(name string, r *ReplicationController) (*ReplicationController, error) {
@@ -84,9 +80,9 @@ func (c *ReplicationControllers) Update(name string, r *ReplicationController) (
 	return r, nil
 }
 
-func (c *ReplicationControllers) Delete(name string) (found bool, err error) {
+func (c *ReplicationControllers) Delete(name string) error {
 	req := c.client.Delete().Collection(c).Namespace(c.Namespace).Name(name).Do()
-	return req.found, req.err
+	return req.err
 }
 
 // Resource-level
@@ -101,6 +97,5 @@ func (r *ReplicationController) Save() error {
 }
 
 func (r *ReplicationController) Delete() error {
-	_, err := r.collection.Delete(r.Metadata.Name)
-	return err
+	return r.collection.Delete(r.Metadata.Name)
 }
