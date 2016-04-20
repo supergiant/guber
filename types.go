@@ -43,9 +43,15 @@ type NodeStatusCondition struct {
 	Status string `json:"status"`
 }
 
+type NodeAddress struct {
+	Type    string `json:"type"`
+	Address string `json:"address"`
+}
+
 type NodeStatus struct {
 	Capacity   *NodeStatusCapacity    `json:"capacity"`
 	Conditions []*NodeStatusCondition `json:"conditions"`
+	Addresses  []*NodeAddress         `json:"addresses"`
 }
 
 type Node struct {

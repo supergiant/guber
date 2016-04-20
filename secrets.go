@@ -9,7 +9,7 @@ type SecretCollection interface {
 	List() (*SecretList, error)
 	Get(name string) (*Secret, error)
 	Update(name string, r *Secret) (*Secret, error)
-	Delete(name string) (found bool, err error)
+	Delete(name string) error
 }
 
 // Secrets implmenets SecretCollection.
@@ -67,14 +67,10 @@ func (c *Secrets) List() (*SecretList, error) {
 
 func (c *Secrets) Get(name string) (*Secret, error) {
 	r := c.New()
-	req := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do()
-	if err := req.Into(r); err != nil {
+	if err := c.client.Get().Collection(c).Namespace(c.Namespace).Name(name).Do().Into(r); err != nil {
 		return nil, err
 	}
-	if req.found {
-		return r, nil
-	}
-	return nil, nil
+	return r, nil
 }
 
 func (c *Secrets) Update(name string, r *Secret) (*Secret, error) {
@@ -84,9 +80,9 @@ func (c *Secrets) Update(name string, r *Secret) (*Secret, error) {
 	return r, nil
 }
 
-func (c *Secrets) Delete(name string) (found bool, err error) {
+func (c *Secrets) Delete(name string) error {
 	req := c.client.Delete().Collection(c).Namespace(c.Namespace).Name(name).Do()
-	return req.found, req.err
+	return req.err
 }
 
 // Resource-level
@@ -101,6 +97,5 @@ func (r *Secret) Save() error {
 }
 
 func (r *Secret) Delete() error {
-	_, err := r.collection.Delete(r.Metadata.Name)
-	return err
+	return r.collection.Delete(r.Metadata.Name)
 }

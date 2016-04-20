@@ -9,7 +9,7 @@ type NamespaceCollection interface {
 	List() (*NamespaceList, error)
 	Get(name string) (*Namespace, error)
 	Update(name string, r *Namespace) (*Namespace, error)
-	Delete(name string) (found bool, err error)
+	Delete(name string) error
 }
 
 // Namespaces implements NamespaceCollection.
@@ -66,14 +66,10 @@ func (c *Namespaces) List() (*NamespaceList, error) {
 
 func (c *Namespaces) Get(name string) (*Namespace, error) {
 	r := c.New()
-	req := c.client.Get().Collection(c).Name(name).Do()
-	if err := req.Into(r); err != nil {
+	if err := c.client.Get().Collection(c).Name(name).Do().Into(r); err != nil {
 		return nil, err
 	}
-	if req.found {
-		return r, nil
-	}
-	return nil, nil
+	return r, nil
 }
 
 func (c *Namespaces) Update(name string, r *Namespace) (*Namespace, error) {
@@ -83,9 +79,9 @@ func (c *Namespaces) Update(name string, r *Namespace) (*Namespace, error) {
 	return r, nil
 }
 
-func (c *Namespaces) Delete(name string) (found bool, err error) {
+func (c *Namespaces) Delete(name string) error {
 	req := c.client.Delete().Collection(c).Name(name).Do()
-	return req.found, req.err
+	return req.err
 }
 
 // Resource-level
@@ -100,6 +96,5 @@ func (r *Namespace) Save() error {
 }
 
 func (r *Namespace) Delete() error {
-	_, err := r.collection.Delete(r.Metadata.Name)
-	return err
+	return r.collection.Delete(r.Metadata.Name)
 }

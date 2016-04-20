@@ -9,7 +9,7 @@ type NodeCollection interface {
 	List() (*NodeList, error)
 	Get(name string) (*Node, error)
 	Update(name string, r *Node) (*Node, error)
-	Delete(name string) (found bool, err error)
+	Delete(name string) error
 }
 
 // Nodes implmenets NodeCollection.
@@ -66,14 +66,10 @@ func (c *Nodes) List() (*NodeList, error) {
 
 func (c *Nodes) Get(name string) (*Node, error) {
 	r := c.New()
-	req := c.client.Get().Collection(c).Name(name).Do()
-	if err := req.Into(r); err != nil {
+	if err := c.client.Get().Collection(c).Name(name).Do().Into(r); err != nil {
 		return nil, err
 	}
-	if req.found {
-		return r, nil
-	}
-	return nil, nil
+	return r, nil
 }
 
 func (c *Nodes) Update(name string, r *Node) (*Node, error) {
@@ -83,9 +79,9 @@ func (c *Nodes) Update(name string, r *Node) (*Node, error) {
 	return r, nil
 }
 
-func (c *Nodes) Delete(name string) (found bool, err error) {
+func (c *Nodes) Delete(name string) error {
 	req := c.client.Delete().Collection(c).Name(name).Do()
-	return req.found, req.err
+	return req.err
 }
 
 // Resource-level
@@ -100,8 +96,7 @@ func (r *Node) Save() error {
 }
 
 func (r *Node) Delete() error {
-	_, err := r.collection.Delete(r.Metadata.Name)
-	return err
+	return r.collection.Delete(r.Metadata.Name)
 }
 
 func (r *Node) IsOutOfDisk() bool {
@@ -120,6 +115,15 @@ func (r *Node) IsOutOfDisk() bool {
 		}
 	}
 	return condition.Status == "True"
+}
+
+func (r *Node) ExternalIP() (ip string) {
+	for _, addr := range r.Status.Addresses {
+		if addr.Type == "ExternalIP" {
+			ip = addr.Address
+		}
+	}
+	return
 }
 
 func (r *Node) HeapsterStats() (*HeapsterStats, error) {
