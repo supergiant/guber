@@ -119,3 +119,10 @@ func (r *Pod) IsReady() bool {
 	}
 	return readyCondition.Status == "True"
 }
+
+func (r *Pod) HeapsterStats() (*HeapsterStats, error) {
+	path := "api/v1/proxy/namespaces/kube-system/services/heapster/api/v1/model/namespaces/" + r.Metadata.Namespace + "/pods/" + r.Metadata.Name + "/stats"
+	out := new(HeapsterStats)
+	err := r.collection.client.Get().Path(path).Do().Into(out)
+	return out, err
+}
