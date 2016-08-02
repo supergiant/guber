@@ -17,6 +17,12 @@ func (e *Error404) Error() string {
 	return "Resource not found"
 }
 
+type Error409 struct{}
+
+func (e *Error409) Error() string {
+	return "Resource already exists"
+}
+
 type Request struct {
 	client    *RealClient
 	method    string
@@ -146,6 +152,8 @@ func (r *Request) Do() *Request {
 
 		if resp.StatusCode == 404 {
 			r.error(new(Error404))
+		} else if resp.StatusCode == 409 {
+			r.error(new(Error409))
 		} else if status := resp.Status; status[:2] != "20" {
 			r.error(fmt.Errorf("Status: %s, Body: %s", status, string(r.responseBody)))
 		}
