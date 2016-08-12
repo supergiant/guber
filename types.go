@@ -287,9 +287,9 @@ type QueryParams struct {
 }
 
 type HeapsterStatMetric struct {
-	Average    int `json:"average"`
-	Percentile int `json:"percentile"`
-	Max        int `json:"max"`
+	Average    int64 `json:"average"`
+	Percentile int64 `json:"percentile"`
+	Max        int64 `json:"max"`
 }
 
 type HeapsterStatPeriods struct {
