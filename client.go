@@ -3,6 +3,7 @@ package guber
 import (
 	"crypto/tls"
 	"net/http"
+	"time"
 )
 
 // Client describes behavior of the root Kubernetes client object.
@@ -61,7 +62,9 @@ type RealClient struct {
 
 // NewClient creates a new Client.
 func NewClient(host string, user string, pass string, insecureHTTPS bool) Client {
-	httpClient := new(http.Client)
+	httpClient := &http.Client{
+		Timeout: 30 * time.Second,
+	}
 	if insecureHTTPS {
 		httpClient.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
