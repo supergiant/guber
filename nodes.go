@@ -118,6 +118,9 @@ func (r *Node) IsOutOfDisk() bool {
 }
 
 func (r *Node) ExternalIP() (ip string) {
+	if r.Status == nil {
+		return
+	}
 	for _, addr := range r.Status.Addresses {
 		if addr.Type == "ExternalIP" {
 			ip = addr.Address
