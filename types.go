@@ -104,9 +104,16 @@ type AwsElasticBlockStore struct {
 	FSType   string `json:"fsType"`
 }
 
+type FlexVolume struct {
+	Driver  string            `json:"driver"`
+	FSType  string            `json:"fsType"`
+	Options map[string]string `json:"options"`
+}
+
 type Volume struct {
 	Name                 string                `json:"name"`
-	AwsElasticBlockStore *AwsElasticBlockStore `json:"awsElasticBlockStore"`
+	AwsElasticBlockStore *AwsElasticBlockStore `json:"awsElasticBlockStore,omitempty"`
+	FlexVolume           *FlexVolume           `json:"flexVolume"`
 }
 
 type VolumeMount struct {
