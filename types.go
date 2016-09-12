@@ -113,7 +113,7 @@ type FlexVolume struct {
 type Volume struct {
 	Name                 string                `json:"name"`
 	AwsElasticBlockStore *AwsElasticBlockStore `json:"awsElasticBlockStore,omitempty"`
-	FlexVolume           *FlexVolume           `json:"flexVolume"`
+	FlexVolume           *FlexVolume           `json:"flexVolume,omitempty"`
 }
 
 type VolumeMount struct {
